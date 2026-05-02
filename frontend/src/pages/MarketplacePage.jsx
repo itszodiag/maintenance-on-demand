@@ -21,11 +21,13 @@ export function MarketplacePage() {
     max_price: searchParams.get('max_price') || '',
   })
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
   const deferredSearch = useDeferredValue(filters.search)
 
   useEffect(() => {
     const loadProducts = async () => {
       setLoading(true)
+      setError(null)
 
       const params = { ...filters, search: deferredSearch }
       const queryParams = new URLSearchParams(searchParams)
@@ -39,6 +41,10 @@ export function MarketplacePage() {
       try {
         const data = await productsApi.list(params)
         setProducts(data.data ?? data)
+      } catch (err) {
+        console.error('[v0] Error loading products:', err.message)
+        setError(err.message)
+        setProducts([])
       } finally {
         setLoading(false)
       }
@@ -66,10 +72,16 @@ export function MarketplacePage() {
       </div>
 
       {loading && <div className="soft-panel p-6 text-slate-500">Loading products...</div>}
-      {!loading && !products.length && <EmptyState title="No products found" description="Try another city, brand, or budget range." />}
+      {!loading && error && (
+        <div className="soft-panel border border-red-200 bg-red-50 p-6 text-red-700">
+          <p className="font-semibold">Error loading products</p>
+          <p className="mt-1 text-sm">{error}</p>
+        </div>
+      )}
+      {!loading && !error && !products.length && <EmptyState title="No products found" description="Try another city, brand, or budget range." />}
 
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-        {products.map((product) => (
+        {!error && products.map((product) => (
           <article key={product.id} className="soft-panel overflow-hidden">
             <Link to={`/products/${product.id}`} className="block h-48 bg-gradient-to-br from-blue-50 via-sky-50 to-white">
               {product.images?.[0] ? (

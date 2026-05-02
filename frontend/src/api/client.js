@@ -22,6 +22,23 @@ http.interceptors.request.use((config) => {
 http.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.error('[API Error]', error.message, {
+      status: error.response?.status,
+      data: error.response?.data,
+      config: error.config,
+    })
+    
+    // Better error handling for network errors
+    if (!error.response) {
+      // Network error or timeout
+      const message = error.code === 'ECONNABORTED' 
+        ? 'Request timeout. Please check your connection.'
+        : error.message === 'Network Error'
+        ? `Network error: Could not connect to API at ${error.config?.baseURL}. Please ensure the backend server is running.`
+        : error.message ?? 'Network connection failed.'
+      return Promise.reject(new Error(message))
+    }
+    
     const message = error.response?.data?.message ?? error.message ?? 'Something went wrong.'
     return Promise.reject(new Error(message))
   },
