@@ -19,6 +19,7 @@ import {
   YAxis,
 } from 'recharts';
 import dashboardApi from '../../api/dashboardApi.js';
+import { useLayoutStore } from '../../state/layoutStore.js';
 import {
   extractCollection,
   formatCompactNumber,
@@ -36,7 +37,10 @@ export function CompanyDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const setHeader = useLayoutStore((state) => state.setHeader);
+
   useEffect(() => {
+    setHeader('Company Operations', 'Track service demand, manage teams, and keep delivery moving.');
     const loadAnalytics = async () => {
       try {
         setLoading(true);
@@ -50,7 +54,7 @@ export function CompanyDashboard() {
     };
 
     loadAnalytics();
-  }, []);
+  }, [setHeader]);
 
   const requestTrend = useMemo(
     () =>
@@ -282,13 +286,13 @@ export function CompanyDashboard() {
             {recentTechnicians.slice(0, 5).map((technician) => (
               <div
                 key={technician.id}
-                className="flex items-center justify-between rounded-[24px] bg-slate-50 px-4 py-4"
+                className="flex items-center justify-between rounded-[24px] bg-slate-50 dark:bg-slate-900 px-4 py-4"
               >
                 <div>
-                  <p className="font-semibold text-slate-900">
+                  <p className="font-semibold text-slate-900 dark:text-slate-100">
                     {technician.Name}
                   </p>
-                  <p className="text-sm text-slate-500">
+                  <p className="text-sm text-slate-500 dark:text-slate-400">
                     {technician.Experience}
                   </p>
                 </div>
@@ -297,7 +301,7 @@ export function CompanyDashboard() {
             ))}
 
             {recentTechnicians.length === 0 && (
-              <p className="rounded-[24px] bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+              <p className="rounded-[24px] bg-slate-50 dark:bg-slate-900 px-4 py-6 text-center text-sm text-slate-500 dark:text-slate-400">
                 No technicians linked yet.
               </p>
             )}
@@ -312,15 +316,15 @@ function ActionLink({ to, icon: Icon, title, description }) {
   return (
     <Link
       to={to}
-      className="group flex items-center justify-between rounded-[24px] border border-slate-100 bg-slate-50/90 px-4 py-4 transition hover:border-blue-200 hover:bg-white hover:shadow-sm"
+      className="group flex items-center justify-between rounded-[24px] border border-slate-100 bg-slate-50 dark:bg-slate-900/90 px-4 py-4 transition hover:border-blue-200 hover:bg-white dark:bg-slate-950 hover:shadow-sm"
     >
       <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-[18px] bg-white text-blue-600 shadow-sm">
+        <div className="flex h-12 w-12 items-center justify-center rounded-[18px] bg-white dark:bg-slate-950 text-blue-600 shadow-sm">
           <Icon className="h-5 w-5" />
         </div>
         <div>
-          <p className="font-semibold text-slate-900">{title}</p>
-          <p className="text-sm text-slate-500">{description}</p>
+          <p className="font-semibold text-slate-900 dark:text-slate-100">{title}</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{description}</p>
         </div>
       </div>
       <ArrowRight className="h-4 w-4 text-slate-400 transition group-hover:text-blue-600" />
@@ -349,9 +353,9 @@ function StatusBadge({ value }) {
 
 function DashboardLoading({ label }) {
   return (
-    <div className="rounded-[30px] border border-white/70 bg-white/90 p-10 text-center shadow-[0_35px_80px_-45px_rgba(37,99,235,0.55)]">
-      <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
-      <p className="mt-4 text-sm font-medium text-slate-500">{label}</p>
+    <div className="rounded-[30px] border border-white/70 dark:border-slate-800/70 bg-white/90 dark:bg-slate-950/90 p-10 text-center shadow-[0_35px_80px_-45px_rgba(37,99,235,0.55)]">
+      <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-slate-200 dark:border-slate-800 border-t-blue-600" />
+      <p className="mt-4 text-sm font-medium text-slate-500 dark:text-slate-400">{label}</p>
     </div>
   );
 }

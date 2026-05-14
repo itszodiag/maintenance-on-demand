@@ -11,15 +11,11 @@ import {
   X,
 } from 'lucide-react';
 import { adminApi } from '../api/modules.js';
+import { useLayoutStore } from '../state/layoutStore.js';
 import { ChartCard } from '../components/dashboard/ChartCard.jsx';
-import { DashboardLayout } from '../components/dashboard/DashboardLayout.jsx';
 import { DataTable } from '../components/dashboard/DataTable.jsx';
 import { StatCard } from '../components/dashboard/StatCard.jsx';
-import {
-  extractCollection,
-  formatCompactNumber,
-  statusTone,
-} from '../lib/dashboard.js';
+import { extractCollection, formatCompactNumber, statusTone } from '../lib/dashboard.js';
 
 const filters = ['all', 'admin', 'company', 'vendor', 'technician', 'client'];
 const roles = ['admin', 'company', 'vendor', 'technician', 'client'];
@@ -128,9 +124,12 @@ export function AdminUsersPage() {
     }
   };
 
+  const setHeader = useLayoutStore((state) => state.setHeader);
+
   useEffect(() => {
+    setHeader('User Management', 'Create, update, verify, and remove platform members.');
     loadUsers();
-  }, []);
+  }, [setHeader]);
 
   const filteredUsers = useMemo(() => {
     if (activeFilter === 'all') {
@@ -269,124 +268,118 @@ export function AdminUsersPage() {
   };
 
   return (
-    <DashboardLayout
-      title="User Management"
-      subtitle="Create, update, verify, and remove platform members."
-      searchPlaceholder="Search users, roles, cities..."
-    >
-      <div className="space-y-6">
-        {feedback ? <FeedbackBanner message={feedback} /> : null}
+    <div className="space-y-6">
+      {feedback ? <FeedbackBanner message={feedback} /> : null}
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <StatCard
-            icon={Users}
-            label="Total users"
-            value={formatCompactNumber(counts.total)}
-            hint="All registered accounts"
-            tone="blue"
-          />
-          <StatCard
-            icon={ShieldCheck}
-            label="Verified"
-            value={formatCompactNumber(counts.verified)}
-            hint="Approved identities"
-            tone="mint"
-          />
-          <StatCard
-            icon={Building2}
-            label="Companies"
-            value={formatCompactNumber(counts.company)}
-            hint="Managed business accounts"
-            tone="peach"
-          />
-          <StatCard
-            icon={UserRoundCog}
-            label="Technicians"
-            value={formatCompactNumber(counts.technician)}
-            hint="Field specialists"
-            tone="slate"
-          />
-        </div>
-
-        <ChartCard
-          title="Role filters"
-          description="Switch between account groups and launch admin actions."
-          height="h-auto"
-        >
-          <div className="flex flex-wrap items-center gap-3">
-            {filters.map((filter) => (
-              <button
-                key={filter}
-                type="button"
-                onClick={() => setActiveFilter(filter)}
-                className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
-                  activeFilter === filter
-                    ? 'bg-blue-600 text-white shadow-[0_20px_40px_-25px_rgba(37,99,235,0.9)]'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                {filter === 'all' ? 'All roles' : capitalize(filter)}
-              </button>
-            ))}
-            <button
-              type="button"
-              onClick={openCreate}
-              className="ml-auto inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
-            >
-              <Plus className="h-4 w-4" />
-              Create User
-            </button>
-          </div>
-        </ChartCard>
-
-        {loading ? (
-          <LoadingPanel label="Loading users..." />
-        ) : (
-          <DataTable
-            title="Platform users"
-            columns={[
-              'Name',
-              'Role',
-              'Email',
-              'City',
-              'Verification',
-              'Actions',
-            ]}
-            data={filteredUsers.map((user) => ({
-              id: user.id,
-              Name: user.display_name || user.name,
-              Role: capitalize(user.role),
-              Email: user.email,
-              City: user.city || user.location || '-',
-              Verification: (
-                <StatusBadge value={user.is_verified ? 'verified' : 'review'} />
-              ),
-              Actions: (
-                <div className="flex flex-wrap gap-2">
-                  <ActionButton
-                    label="Edit"
-                    icon={Pencil}
-                    onClick={() => openEdit(user)}
-                  />
-                  <ActionButton
-                    label={user.is_verified ? 'Unverify' : 'Verify'}
-                    onClick={() => toggleVerification(user)}
-                    disabled={actionId === user.id}
-                  />
-                  <ActionButton
-                    label="Delete"
-                    icon={Trash2}
-                    tone="danger"
-                    onClick={() => deleteUser(user)}
-                    disabled={actionId === user.id}
-                  />
-                </div>
-              ),
-            }))}
-            emptyLabel="No users matched this filter."
-          />
-        )}
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <StatCard
+          icon={Users}
+          label="Total users"
+          value={formatCompactNumber(counts.total)}
+          hint="All registered accounts"
+          tone="blue"
+        />
+        <StatCard
+          icon={ShieldCheck}
+          label="Verified"
+          value={formatCompactNumber(counts.verified)}
+          hint="Approved identities"
+          tone="mint"
+        />
+        <StatCard
+          icon={Building2}
+          label="Companies"
+          value={formatCompactNumber(counts.company)}
+          hint="Managed business accounts"
+          tone="peach"
+        />
+        <StatCard
+          icon={UserRoundCog}
+          label="Technicians"
+          value={formatCompactNumber(counts.technician)}
+          hint="Field specialists"
+          tone="slate"
+        />
       </div>
+
+      <ChartCard
+        title="Role filters"
+        description="Switch between account groups and launch admin actions."
+        height="h-auto"
+      >
+        <div className="flex flex-wrap items-center gap-3">
+          {filters.map((filter) => (
+            <button
+              key={filter}
+              type="button"
+              onClick={() => setActiveFilter(filter)}
+              className={`rounded-full px-4 py-2 text-sm font-semibold transition ${
+                activeFilter === filter
+                  ? 'bg-blue-600 text-white shadow-[0_20px_40px_-25px_rgba(37,99,235,0.9)]'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
+              }`}
+            >
+              {filter === 'all' ? 'All roles' : capitalize(filter)}
+            </button>
+          ))}
+          <button
+            type="button"
+            onClick={openCreate}
+            className="ml-auto inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+          >
+            <Plus className="h-4 w-4" />
+            Create User
+          </button>
+        </div>
+      </ChartCard>
+
+      {loading ? (
+        <LoadingPanel label="Loading users..." />
+      ) : (
+        <DataTable
+          title="Platform users"
+          columns={[
+            'Name',
+            'Role',
+            'Email',
+            'City',
+            'Verification',
+            'Actions',
+          ]}
+          data={filteredUsers.map((user) => ({
+            id: user.id,
+            Name: user.display_name || user.name,
+            Role: capitalize(user.role),
+            Email: user.email,
+            City: user.city || user.location || '-',
+            Verification: (
+              <StatusBadge value={user.is_verified ? 'verified' : 'review'} />
+            ),
+            Actions: (
+              <div className="flex flex-wrap gap-2">
+                <ActionButton
+                  label="Edit"
+                  icon={Pencil}
+                  onClick={() => openEdit(user)}
+                />
+                <ActionButton
+                  label={user.is_verified ? 'Unverify' : 'Verify'}
+                  onClick={() => toggleVerification(user)}
+                  disabled={actionId === user.id}
+                />
+                <ActionButton
+                  label="Delete"
+                  icon={Trash2}
+                  tone="danger"
+                  onClick={() => deleteUser(user)}
+                  disabled={actionId === user.id}
+                />
+              </div>
+            ),
+          }))}
+          emptyLabel="No users matched this filter."
+        />
+      )}
 
       {editor ? (
         <UserEditorModal
@@ -399,7 +392,7 @@ export function AdminUsersPage() {
           loading={saving}
         />
       ) : null}
-    </DashboardLayout>
+    </div>
   );
 }
 
@@ -432,9 +425,9 @@ function UserEditorModal({
       onClose={onClose}
     >
       <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="rounded-[24px] border border-blue-100 bg-blue-50/70 px-4 py-3">
-          <p className="text-sm font-semibold text-slate-900">{roleMeta.title}</p>
-          <p className="mt-1 text-sm text-slate-600">{roleMeta.description}</p>
+        <div className="rounded-[24px] border border-blue-100 dark:border-slate-800 bg-blue-50/70 px-4 py-3">
+          <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">{roleMeta.title}</p>
+          <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">{roleMeta.description}</p>
         </div>
 
         {error ? (
@@ -532,17 +525,17 @@ function UserEditorModal({
           </div>
         </Section>
 
-        <div className="overflow-hidden rounded-[24px] border border-slate-100 bg-white">
+        <div className="overflow-hidden rounded-[24px] border border-slate-100 bg-white dark:bg-slate-950">
           <button
             type="button"
             onClick={() => setShowAdvanced((current) => !current)}
             className="flex w-full items-center justify-between px-4 py-3 text-left"
           >
             <div>
-              <p className="text-sm font-bold uppercase tracking-[0.16em] text-slate-500">
+              <p className="text-sm font-bold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
                 Optional Details
               </p>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                 Bio, location, coordinates, and address.
               </p>
             </div>
@@ -635,7 +628,7 @@ function ActionButton({
       className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
         tone === 'danger'
           ? 'bg-rose-50 text-rose-700 hover:bg-rose-100'
-          : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
       } disabled:cursor-not-allowed disabled:opacity-60`}
       {...props}
     >
@@ -659,7 +652,7 @@ function StatusBadge({ value }) {
 
 function Field({ label, children }) {
   return (
-    <label className="grid gap-2 text-sm font-medium text-slate-700">
+    <label className="grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
       <span>{label}</span>
       {children}
     </label>
@@ -668,9 +661,9 @@ function Field({ label, children }) {
 
 function Section({ title, children }) {
   return (
-    <section className="space-y-4 rounded-[24px] border border-slate-100 bg-slate-50/70 p-4">
+    <section className="space-y-4 rounded-[24px] border border-slate-100 bg-slate-50 dark:bg-slate-900/70 p-4">
       <div>
-        <h3 className="text-sm font-bold uppercase tracking-[0.16em] text-slate-500">
+        <h3 className="text-sm font-bold uppercase tracking-[0.16em] text-slate-500 dark:text-slate-400">
           {title}
         </h3>
       </div>
@@ -682,16 +675,16 @@ function Section({ title, children }) {
 function ModalShell({ title, subtitle, onClose, children }) {
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-xl rounded-[28px] border border-slate-200 bg-white shadow-2xl">
+      <div className="w-full max-w-xl rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-2xl">
         <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-6 py-5">
           <div>
-            <h2 className="text-xl font-bold text-slate-900">{title}</h2>
-            <p className="mt-1 text-sm text-slate-500">{subtitle}</p>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">{title}</h2>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{subtitle}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+            className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 dark:hover:bg-slate-800 dark:bg-slate-800 hover:text-slate-600 dark:text-slate-400"
           >
             <X className="h-5 w-5" />
           </button>
@@ -708,7 +701,7 @@ function ModalActions({ loading, submitLabel, onClose }) {
       <button
         type="button"
         onClick={onClose}
-        className="rounded-full px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
+        className="rounded-full px-4 py-2 text-sm font-semibold text-slate-600 dark:text-slate-400 transition hover:bg-slate-100 dark:hover:bg-slate-800 dark:bg-slate-800"
       >
         Cancel
       </button>
@@ -725,7 +718,7 @@ function ModalActions({ loading, submitLabel, onClose }) {
 
 function FeedbackBanner({ message }) {
   return (
-    <div className="rounded-[24px] border border-blue-100 bg-blue-50 px-5 py-3 text-sm text-blue-700">
+    <div className="rounded-[24px] border border-blue-100 dark:border-slate-800 bg-blue-50 px-5 py-3 text-sm text-blue-700">
       {message}
     </div>
   );
@@ -733,9 +726,9 @@ function FeedbackBanner({ message }) {
 
 function LoadingPanel({ label }) {
   return (
-    <div className="rounded-[30px] border border-white/70 bg-white/90 p-10 text-center shadow-[0_35px_80px_-45px_rgba(37,99,235,0.55)]">
-      <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
-      <p className="mt-4 text-sm font-medium text-slate-500">{label}</p>
+    <div className="rounded-[30px] border border-white/70 dark:border-slate-800/70 bg-white/90 dark:bg-slate-950/90 p-10 text-center shadow-[0_35px_80px_-45px_rgba(37,99,235,0.55)]">
+      <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-slate-200 dark:border-slate-800 border-t-blue-600" />
+      <p className="mt-4 text-sm font-medium text-slate-500 dark:text-slate-400">{label}</p>
     </div>
   );
 }
@@ -779,4 +772,4 @@ function getRoleMeta(role) {
 }
 
 const inputClassName =
-  'w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-700 outline-none transition focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-100';
+  'w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 outline-none transition focus:border-blue-400 dark:focus:border-blue-400 focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-950 focus:ring-2 focus:ring-blue-100';

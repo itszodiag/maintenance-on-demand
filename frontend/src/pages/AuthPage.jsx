@@ -67,7 +67,7 @@ export function AuthPage() {
                 key={item}
                 type="button"
                 onClick={() => setMode(item)}
-                className={item === mode ? 'flex-1 rounded-full bg-blue-700 px-4 py-3 font-semibold text-white' : 'flex-1 rounded-full px-4 py-3 font-semibold text-slate-600'}
+                className={item === mode ? 'flex-1 rounded-full bg-blue-700 px-4 py-3 font-semibold text-white' : 'flex-1 rounded-full px-4 py-3 font-semibold text-slate-600 dark:text-slate-400'}
               >
                 {item === 'login' ? 'Sign in' : 'Create account'}
               </button>
@@ -112,7 +112,7 @@ export function AuthPage() {
             </button>
           </form>
 
-          <p className="mt-6 text-sm text-slate-500">
+          <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">
             Want to explore first? <Link to="/" className="font-semibold text-blue-700">Go back home</Link>
           </p>
         </div>

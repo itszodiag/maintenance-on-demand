@@ -20,6 +20,7 @@ import {
   YAxis,
 } from 'recharts';
 import dashboardApi from '../../api/dashboardApi.js';
+import { useLayoutStore } from '../../state/layoutStore.js';
 import {
   extractCollection,
   formatCompactNumber,
@@ -39,7 +40,10 @@ export function AdminDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  const setHeader = useLayoutStore((state) => state.setHeader);
+
   useEffect(() => {
+    setHeader('Admin Control Center', 'Monitor platform activity, moderation queues, and system health.');
     const loadAnalytics = async () => {
       try {
         setLoading(true);
@@ -53,7 +57,7 @@ export function AdminDashboard() {
     };
 
     loadAnalytics();
-  }, []);
+  }, [setHeader]);
 
   const usersGrowth = useMemo(
     () =>
@@ -325,15 +329,15 @@ function ActionLink({ to, icon: Icon, title, description }) {
   return (
     <Link
       to={to}
-      className="group flex items-center justify-between rounded-[24px] border border-slate-100 bg-slate-50/90 px-4 py-4 transition hover:border-blue-200 hover:bg-white hover:shadow-sm"
+      className="group flex items-center justify-between rounded-[24px] border border-slate-100 bg-slate-50 dark:bg-slate-900/90 px-4 py-4 transition hover:border-blue-200 hover:bg-white dark:bg-slate-950 hover:shadow-sm"
     >
       <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-[18px] bg-white text-blue-600 shadow-sm">
+        <div className="flex h-12 w-12 items-center justify-center rounded-[18px] bg-white dark:bg-slate-950 text-blue-600 shadow-sm">
           <Icon className="h-5 w-5" />
         </div>
         <div>
-          <p className="font-semibold text-slate-900">{title}</p>
-          <p className="text-sm text-slate-500">{description}</p>
+          <p className="font-semibold text-slate-900 dark:text-slate-100">{title}</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{description}</p>
         </div>
       </div>
       <ArrowRight className="h-4 w-4 text-slate-400 transition group-hover:text-blue-600" />
@@ -352,13 +356,13 @@ function MetricTile({ label, value }) {
 
 function LegendRow({ color, label, value }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl bg-slate-50 px-3 py-2">
+    <div className="flex items-center gap-3 rounded-2xl bg-slate-50 dark:bg-slate-900 px-3 py-2">
       <span
         className="h-3.5 w-3.5 rounded-full"
         style={{ backgroundColor: color }}
       />
-      <span className="text-sm font-medium text-slate-600">{label}</span>
-      <span className="ml-auto text-sm font-bold text-slate-900">{value}</span>
+      <span className="text-sm font-medium text-slate-600 dark:text-slate-400">{label}</span>
+      <span className="ml-auto text-sm font-bold text-slate-900 dark:text-slate-100">{value}</span>
     </div>
   );
 }
@@ -375,9 +379,9 @@ function StatusBadge({ value }) {
 
 function DashboardLoading({ label }) {
   return (
-    <div className="rounded-[30px] border border-white/70 bg-white/90 p-10 text-center shadow-[0_35px_80px_-45px_rgba(37,99,235,0.55)]">
-      <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
-      <p className="mt-4 text-sm font-medium text-slate-500">{label}</p>
+    <div className="rounded-[30px] border border-white/70 dark:border-slate-800/70 bg-white/90 dark:bg-slate-950/90 p-10 text-center shadow-[0_35px_80px_-45px_rgba(37,99,235,0.55)]">
+      <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-slate-200 dark:border-slate-800 border-t-blue-600" />
+      <p className="mt-4 text-sm font-medium text-slate-500 dark:text-slate-400">{label}</p>
     </div>
   );
 }

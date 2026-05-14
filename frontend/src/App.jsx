@@ -2,6 +2,14 @@ import { useEffect } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { AppLayout } from './components/layout/AppLayout.jsx';
 import { DashboardLayout } from './components/dashboard/DashboardLayout.jsx';
+import { TechnicianLayout } from './components/dashboard/TechnicianLayout.jsx';
+import { TechnicianDashboard } from './components/dashboard/TechnicianDashboard.jsx';
+import { VendorLayout } from './components/dashboard/VendorLayout.jsx';
+import { VendorDashboard } from './components/dashboard/VendorDashboard.jsx';
+import { CompanyLayout } from './components/dashboard/CompanyLayout.jsx';
+import { CompanyDashboard } from './components/dashboard/CompanyDashboard.jsx';
+import { AdminLayout } from './components/dashboard/AdminLayout.jsx';
+import { AdminDashboard } from './components/dashboard/AdminDashboard.jsx';
 import { useNotificationPolling } from './state/notificationStore.js';
 import { useAuthStore } from './state/authStore.js';
 import { useFavoritesStore } from './state/favoritesStore.js';
@@ -36,7 +44,7 @@ import { getDashboardPathForRole, isClientRole } from './lib/roleRoutes.js';
 
 function LoadingRoute() {
   return (
-    <div className="flex min-h-screen items-center justify-center text-slate-500">
+    <div className="flex min-h-screen items-center justify-center text-slate-500 dark:text-slate-400">
       Loading workspace...
     </div>
   );
@@ -171,282 +179,264 @@ export default function App() {
   return (
     <Routes>
       <Route path="/auth" element={<AuthEntryRoute />} />
-      <Route
-        path="/"
-        element={
-          <ClientEntryRoute>
-            <AppLayout>
-              <HomePage />
-            </AppLayout>
-          </ClientEntryRoute>
-        }
-      />
-      <Route
-        path="/services"
-        element={
-          <ClientEntryRoute>
-            <AppLayout>
-              <ServicesPage />
-            </AppLayout>
-          </ClientEntryRoute>
-        }
-      />
-      <Route
-        path="/services/:serviceId"
-        element={
-          <ClientEntryRoute>
-            <AppLayout>
-              <ServiceDetailsPage />
-            </AppLayout>
-          </ClientEntryRoute>
-        }
-      />
-      <Route
-        path="/marketplace"
-        element={
-          <ClientEntryRoute>
-            <AppLayout>
-              <MarketplacePage />
-            </AppLayout>
-          </ClientEntryRoute>
-        }
-      />
-      <Route
-        path="/products/:productId"
-        element={
-          <ClientEntryRoute>
-            <AppLayout>
-              <ProductDetailsPage />
-            </AppLayout>
-          </ClientEntryRoute>
-        }
-      />
-      <Route
-        path="/cart"
-        element={
-          <ProtectedRoute>
-            <AppLayout>
-              <CartPage />
-            </AppLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/profile"
-        element={
-          <ProtectedRoute>
-            <AppLayout>
-              <ProfilePage />
-            </AppLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/chat"
-        element={
-          <ProtectedRoute>
-            <AppLayout>
-              <ChatPage />
-            </AppLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/notifications"
-        element={
-          <ProtectedRoute>
-            <AppLayout>
-              <NotificationsPage />
-            </AppLayout>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/payments/:paymentType/:paymentId"
-        element={
-          <ProtectedRoute>
-            <AppLayout>
-              <PaymentPage />
-            </AppLayout>
-          </ProtectedRoute>
-        }
-      />
       <Route path="/dashboard" element={<LegacyDashboardRedirect />} />
-      <Route
-        path="/admin/dashboard"
-        element={
-          <DashboardRoleRoute allowedRoles={['admin']}>
-            <DashboardPage role="admin" />
-          </DashboardRoleRoute>
-        }
-      />
-      <Route
-        path="/admin/users"
-        element={
-          <DashboardRoleRoute allowedRoles={['admin']}>
-            <AdminUsersPage />
-          </DashboardRoleRoute>
-        }
-      />
-      <Route
-        path="/admin/companies"
-        element={
-          <DashboardRoleRoute allowedRoles={['admin']}>
-            <AdminCompaniesPage />
-          </DashboardRoleRoute>
-        }
-      />
-      <Route
-        path="/admin/services"
-        element={
-          <DashboardRoleRoute allowedRoles={['admin']}>
-            <AdminServicesPage />
-          </DashboardRoleRoute>
-        }
-      />
-      <Route
-        path="/admin/products"
-        element={
-          <DashboardRoleRoute allowedRoles={['admin']}>
-            <AdminProductsPage />
-          </DashboardRoleRoute>
-        }
-      />
-      <Route
-        path="/admin/requests"
-        element={
-          <DashboardRoleRoute allowedRoles={['admin']}>
-            <AdminRequestsPage />
-          </DashboardRoleRoute>
-        }
-      />
-      <Route
-        path="/admin/orders"
-        element={
-          <DashboardRoleRoute allowedRoles={['admin']}>
-            <AdminOrdersPage />
-          </DashboardRoleRoute>
-        }
-      />
-      <Route
-        path="/admin/reviews"
-        element={
-          <DashboardRoleRoute allowedRoles={['admin']}>
-            <AdminReviewsPage />
-          </DashboardRoleRoute>
-        }
-      />
-      <Route
-        path="/company/dashboard"
-        element={
-          <DashboardRoleRoute allowedRoles={['company']}>
-            <DashboardPage role="company" />
-          </DashboardRoleRoute>
-        }
-      />
-      <Route
-        path="/company/services"
-        element={
-          <DashboardRoleRoute allowedRoles={['company']}>
-            <DashboardShell
-              title="Service Management"
-              subtitle="Create, update, and monitor published services."
-            >
+
+      {/* --- CLIENT / SHARED LAYOUT --- */}
+      <Route element={<AppLayout />}>
+        <Route
+          path="/"
+          element={
+            <ClientEntryRoute>
+              <HomePage />
+            </ClientEntryRoute>
+          }
+        />
+        <Route
+          path="/services"
+          element={
+            <ClientEntryRoute>
+              <ServicesPage />
+            </ClientEntryRoute>
+          }
+        />
+        <Route
+          path="/services/:serviceId"
+          element={
+            <ClientEntryRoute>
+              <ServiceDetailsPage />
+            </ClientEntryRoute>
+          }
+        />
+        <Route
+          path="/marketplace"
+          element={
+            <ClientEntryRoute>
+              <MarketplacePage />
+            </ClientEntryRoute>
+          }
+        />
+        <Route
+          path="/products/:productId"
+          element={
+            <ClientEntryRoute>
+              <ProductDetailsPage />
+            </ClientEntryRoute>
+          }
+        />
+        <Route
+          path="/cart"
+          element={
+            <ProtectedRoute>
+              <CartPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/chat"
+          element={
+            <ProtectedRoute>
+              <ChatPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            <ProtectedRoute>
+              <NotificationsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payments/:paymentType/:paymentId"
+          element={
+            <ProtectedRoute>
+              <PaymentPage />
+            </ProtectedRoute>
+          }
+        />
+      </Route>
+      {/* --- ADMIN LAYOUT --- */}
+      <Route element={<AdminLayout />}>
+        <Route
+          path="/admin/dashboard"
+          element={
+            <DashboardRoleRoute allowedRoles={['admin']}>
+              <AdminDashboard />
+            </DashboardRoleRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <DashboardRoleRoute allowedRoles={['admin']}>
+              <AdminUsersPage />
+            </DashboardRoleRoute>
+          }
+        />
+        <Route
+          path="/admin/companies"
+          element={
+            <DashboardRoleRoute allowedRoles={['admin']}>
+              <AdminCompaniesPage />
+            </DashboardRoleRoute>
+          }
+        />
+        <Route
+          path="/admin/services"
+          element={
+            <DashboardRoleRoute allowedRoles={['admin']}>
+              <AdminServicesPage />
+            </DashboardRoleRoute>
+          }
+        />
+        <Route
+          path="/admin/products"
+          element={
+            <DashboardRoleRoute allowedRoles={['admin']}>
+              <AdminProductsPage />
+            </DashboardRoleRoute>
+          }
+        />
+        <Route
+          path="/admin/requests"
+          element={
+            <DashboardRoleRoute allowedRoles={['admin']}>
+              <AdminRequestsPage />
+            </DashboardRoleRoute>
+          }
+        />
+        <Route
+          path="/admin/orders"
+          element={
+            <DashboardRoleRoute allowedRoles={['admin']}>
+              <AdminOrdersPage />
+            </DashboardRoleRoute>
+          }
+        />
+        <Route
+          path="/admin/reviews"
+          element={
+            <DashboardRoleRoute allowedRoles={['admin']}>
+              <AdminReviewsPage />
+            </DashboardRoleRoute>
+          }
+        />
+      </Route>
+
+      {/* --- COMPANY LAYOUT --- */}
+      <Route element={<CompanyLayout />}>
+        <Route
+          path="/company/dashboard"
+          element={
+            <DashboardRoleRoute allowedRoles={['company']}>
+              <CompanyDashboard />
+            </DashboardRoleRoute>
+          }
+        />
+        <Route
+          path="/company/services"
+          element={
+            <DashboardRoleRoute allowedRoles={['company']}>
               <DashboardServicesPage />
-            </DashboardShell>
-          </DashboardRoleRoute>
-        }
-      />
-      <Route
-        path="/company/requests"
-        element={
-          <DashboardRoleRoute allowedRoles={['company']}>
-            <CompanyRequestsPage />
-          </DashboardRoleRoute>
-        }
-      />
-      <Route
-        path="/company/technicians"
-        element={
-          <DashboardRoleRoute allowedRoles={['company']}>
-            <CompanyTechniciansPage />
-          </DashboardRoleRoute>
-        }
-      />
-      <Route
-        path="/vendor/dashboard"
-        element={
-          <DashboardRoleRoute allowedRoles={['vendor']}>
-            <DashboardPage role="vendor" />
-          </DashboardRoleRoute>
-        }
-      />
-      <Route
-        path="/vendor/products"
-        element={
-          <DashboardRoleRoute allowedRoles={['vendor']}>
-            <DashboardShell
-              title="Product Catalog"
-              subtitle="Manage inventory, pricing, and marketplace visibility."
-            >
+            </DashboardRoleRoute>
+          }
+        />
+        <Route
+          path="/company/requests"
+          element={
+            <DashboardRoleRoute allowedRoles={['company']}>
+              <CompanyRequestsPage />
+            </DashboardRoleRoute>
+          }
+        />
+        <Route
+          path="/company/technicians"
+          element={
+            <DashboardRoleRoute allowedRoles={['company']}>
+              <CompanyTechniciansPage />
+            </DashboardRoleRoute>
+          }
+        />
+      </Route>
+      {/* --- VENDOR LAYOUT --- */}
+      <Route element={<VendorLayout />}>
+        <Route
+          path="/vendor/dashboard"
+          element={
+            <DashboardRoleRoute allowedRoles={['vendor']}>
+              <VendorDashboard />
+            </DashboardRoleRoute>
+          }
+        />
+        <Route
+          path="/vendor/products"
+          element={
+            <DashboardRoleRoute allowedRoles={['vendor']}>
               <DashboardProductsPage />
-            </DashboardShell>
-          </DashboardRoleRoute>
-        }
-      />
-      <Route
-        path="/vendor/orders"
-        element={
-          <DashboardRoleRoute allowedRoles={['vendor']}>
-            <VendorOrdersPage />
-          </DashboardRoleRoute>
-        }
-      />
-      <Route
-        path="/tech/dashboard"
-        element={
-          <DashboardRoleRoute allowedRoles={['technician']}>
-            <DashboardPage role="technician" />
-          </DashboardRoleRoute>
-        }
-      />
-      <Route
-        path="/tech/services"
-        element={
-          <DashboardRoleRoute allowedRoles={['technician']}>
-            <DashboardShell
-              title="Service Management"
-              subtitle="Create, update, and monitor your service offerings."
-            >
+            </DashboardRoleRoute>
+          }
+        />
+        <Route
+          path="/vendor/orders"
+          element={
+            <DashboardRoleRoute allowedRoles={['vendor']}>
+              <VendorOrdersPage />
+            </DashboardRoleRoute>
+          }
+        />
+      </Route>
+      {/* --- TECHNICIAN LAYOUT --- */}
+      <Route element={<TechnicianLayout />}>
+        <Route
+          path="/tech/dashboard"
+          element={
+            <DashboardRoleRoute allowedRoles={['technician']}>
+              <TechnicianDashboard />
+            </DashboardRoleRoute>
+          }
+        />
+        <Route
+          path="/tech/services"
+          element={
+            <DashboardRoleRoute allowedRoles={['technician']}>
               <DashboardServicesPage />
-            </DashboardShell>
-          </DashboardRoleRoute>
-        }
-      />
-      <Route
-        path="/tech/tasks"
-        element={
-          <DashboardRoleRoute allowedRoles={['technician']}>
-            <TechnicianTasksPage />
-          </DashboardRoleRoute>
-        }
-      />
-      <Route
-        path="/tech/reports"
-        element={
-          <DashboardRoleRoute allowedRoles={['technician']}>
-            <TechnicianReportsPage />
-          </DashboardRoleRoute>
-        }
-      />
-      <Route
-        path="/tech/invitations"
-        element={
-          <DashboardRoleRoute allowedRoles={['technician']}>
-            <TechnicianInvitationsPage />
-          </DashboardRoleRoute>
-        }
-      />
+            </DashboardRoleRoute>
+          }
+        />
+        <Route
+          path="/tech/tasks"
+          element={
+            <DashboardRoleRoute allowedRoles={['technician']}>
+              <TechnicianTasksPage />
+            </DashboardRoleRoute>
+          }
+        />
+        <Route
+          path="/tech/reports"
+          element={
+            <DashboardRoleRoute allowedRoles={['technician']}>
+              <TechnicianReportsPage />
+            </DashboardRoleRoute>
+          }
+        />
+        <Route
+          path="/tech/invitations"
+          element={
+            <DashboardRoleRoute allowedRoles={['technician']}>
+              <TechnicianInvitationsPage />
+            </DashboardRoleRoute>
+          }
+        />
+      </Route>
     </Routes>
   );
 }

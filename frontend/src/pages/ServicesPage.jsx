@@ -135,13 +135,13 @@ export function ServicesPage() {
         description="Search by city or neighborhood, compare listing prices, and explore the map like a modern travel marketplace."
       />
 
-      <div className="sticky top-[92px] z-20 rounded-[30px] border border-blue-100 bg-white/90 p-4 shadow-lg shadow-blue-100/40 backdrop-blur-xl">
+      <div className="relative z-30 rounded-[30px] border border-blue-100 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 p-4 shadow-lg shadow-blue-100/40 backdrop-blur-xl">
         <div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr),repeat(4,minmax(0,1fr))]">
-          <label className="flex items-center gap-3 rounded-[22px] border border-blue-100 bg-slate-50 px-4 py-3">
+          <label className="flex items-center gap-3 rounded-[22px] border border-blue-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3">
             <Search className="h-4 w-4 text-blue-700" />
             <input className="w-full bg-transparent text-sm outline-none" placeholder="Search services, categories, providers..." value={filters.search} onChange={(event) => setFilters((current) => ({ ...current, search: event.target.value }))} />
           </label>
-          <label className="flex items-center gap-3 rounded-[22px] border border-blue-100 bg-slate-50 px-4 py-3">
+          <label className="flex items-center gap-3 rounded-[22px] border border-blue-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3">
             <MapPinned className="h-4 w-4 text-blue-700" />
             <input className="w-full bg-transparent text-sm outline-none" placeholder="City or neighborhood (Maarif, Sbata...)" value={locationSearch} onChange={(event) => setLocationSearch(event.target.value)} />
           </label>
@@ -163,18 +163,18 @@ export function ServicesPage() {
             </select>
           </div>
         </div>
-        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-600">
+        <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-slate-600 dark:text-slate-400">
           <span className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-2 text-blue-700">
             <SlidersHorizontal className="h-4 w-4" />
             {visibleServices.length} result(s)
           </span>
-          {locationResult && <span className="rounded-full bg-slate-50 px-3 py-2">Centered on {locationResult.label}</span>}
+          {locationResult && <span className="rounded-full bg-slate-50 dark:bg-slate-900 px-3 py-2">Centered on {locationResult.label}</span>}
         </div>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,520px),minmax(0,1fr)] xl:items-start">
-        <div className="space-y-4 xl:max-h-[calc(100vh-220px)] xl:overflow-y-auto xl:pr-2">
-          {loading && <div className="soft-panel p-6 text-slate-500">Loading services...</div>}
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,520px),minmax(0,1fr)]">
+        <div className="space-y-4 xl:max-h-[calc(100vh-240px)] xl:overflow-y-auto xl:pr-2">
+          {loading && <div className="soft-panel p-6 text-slate-500 dark:text-slate-400">Loading services...</div>}
           {!loading && error && <div className="soft-panel p-6 text-rose-700">{error}</div>}
           {!loading && !visibleServices.length && <EmptyState title="No matching services" description="Try widening your filters or exploring another city or neighborhood." />}
 
@@ -199,15 +199,15 @@ export function ServicesPage() {
                     <div>
                       <p className="text-xs uppercase tracking-[0.24em] text-blue-700">{service.category}</p>
                       <h3 className="mt-2 text-xl font-bold">{service.title}</h3>
-                      <p className="mt-2 text-sm text-slate-500">{service.city} | {service.provider?.display_name}</p>
+                      <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{service.city} | {service.provider?.display_name}</p>
                     </div>
                     <StatusBadge status={service.status} />
                   </div>
-                  <p className="line-clamp-2 text-sm leading-6 text-slate-600">{service.description}</p>
+                  <p className="line-clamp-2 text-sm leading-6 text-slate-600 dark:text-slate-400">{service.description}</p>
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
                       <p className="text-2xl font-black text-blue-800">{service.price} DH</p>
-                      <p className="text-sm text-slate-500">{service.average_rating} rating | {service.reviews_count} reviews</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{service.average_rating} rating | {service.reviews_count} reviews</p>
                     </div>
                     <div className="flex flex-wrap gap-2">
                       <button type="button" onClick={(event) => { event.preventDefault(); toggleFavorite(service.id) }} className={`button-secondary ${isFavorite('service', service.id) ? 'bg-blue-700 text-white hover:bg-blue-800' : ''}`}>
@@ -232,7 +232,7 @@ export function ServicesPage() {
           ))}
         </div>
 
-        <div className="xl:sticky xl:top-[184px]">
+        <div className="xl:relative xl:h-fit">
           <ListingsMap items={visibleServices} activeId={activeId} onActiveChange={setActiveId} focusTarget={mapFocus} />
         </div>
       </div>

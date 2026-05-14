@@ -89,7 +89,7 @@ export function PaymentPage() {
   }
 
   if (loading || !details) {
-    return <div className="soft-panel p-6 text-slate-500">Loading payment details...</div>
+    return <div className="soft-panel p-6 text-slate-500 dark:text-slate-400">Loading payment details...</div>
   }
 
   const item = details.item
@@ -114,7 +114,7 @@ export function PaymentPage() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <p className="text-sm uppercase tracking-[0.24em] text-blue-700">{preferredTypeLabel}</p>
-              <h3 className="mt-2 text-2xl font-black text-slate-900">{details.title}</h3>
+              <h3 className="mt-2 text-2xl font-black text-slate-900 dark:text-slate-100">{details.title}</h3>
             </div>
             <StatusBadge status={item.payment_status === 'paid' ? 'paid' : item.status} />
           </div>
@@ -130,11 +130,11 @@ export function PaymentPage() {
             <div className="mt-6 space-y-3">
               <h4 className="text-lg font-bold">Order items</h4>
               {item.items?.map((entry) => (
-                <div key={entry.id} className="rounded-[20px] border border-blue-100 p-4">
+                <div key={entry.id} className="rounded-[20px] border border-blue-100 dark:border-slate-800 p-4">
                   <div className="flex items-center justify-between gap-4">
                     <div>
                       <p className="font-semibold">{entry.title}</p>
-                      <p className="text-sm text-slate-500">{entry.quantity} x {entry.unit_price} MAD</p>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{entry.quantity} x {entry.unit_price} MAD</p>
                     </div>
                     <p className="font-bold text-blue-800">{entry.line_total} MAD</p>
                   </div>
@@ -142,9 +142,9 @@ export function PaymentPage() {
               ))}
             </div>
           ) : (
-            <div className="mt-6 rounded-[24px] border border-blue-100 bg-blue-50/40 p-5">
-              <p className="font-semibold text-slate-900">{item.address}</p>
-              <p className="mt-2 text-sm leading-6 text-slate-600">{item.description || details.description}</p>
+            <div className="mt-6 rounded-[24px] border border-blue-100 dark:border-slate-800 bg-blue-50/40 p-5">
+              <p className="font-semibold text-slate-900 dark:text-slate-100">{item.address}</p>
+              <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">{item.description || details.description}</p>
             </div>
           )}
 
@@ -153,22 +153,22 @@ export function PaymentPage() {
 
         <SectionCard>
           <h3 className="text-xl font-bold">Choose payment method</h3>
-          <p className="mt-2 text-sm text-slate-600">Cash keeps the item pending until completion. Stripe test mode marks it as paid after successful checkout.</p>
+          <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">Cash keeps the item pending until completion. Stripe test mode marks it as paid after successful checkout.</p>
 
           <div className="mt-6 space-y-4">
             <button
               type="button"
               disabled={processing || isPaid}
               onClick={startCashPayment}
-              className="flex w-full items-start justify-between rounded-[24px] border border-blue-100 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex w-full items-start justify-between rounded-[24px] border border-blue-100 dark:border-slate-800 bg-white dark:bg-slate-950 p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
             >
               <div className="flex items-start gap-4">
                 <div className="rounded-2xl bg-blue-50 p-3 text-blue-700">
                   <Banknote className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="font-semibold text-slate-900">Cash on delivery</p>
-                  <p className="mt-1 text-sm text-slate-600">Confirm the booking or order and pay in cash when the service or delivery is completed.</p>
+                  <p className="font-semibold text-slate-900 dark:text-slate-100">Cash on delivery</p>
+                  <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Confirm the booking or order and pay in cash when the service or delivery is completed.</p>
                 </div>
               </div>
               <span className="text-sm font-semibold text-blue-700">{item.payment_method === 'cash' ? 'Selected' : 'Choose'}</span>
@@ -178,15 +178,15 @@ export function PaymentPage() {
               type="button"
               disabled={processing || isPaid}
               onClick={startStripePayment}
-              className="flex w-full items-start justify-between rounded-[24px] border border-blue-100 bg-white p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
+              className="flex w-full items-start justify-between rounded-[24px] border border-blue-100 dark:border-slate-800 bg-white dark:bg-slate-950 p-5 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md disabled:cursor-not-allowed disabled:opacity-60"
             >
               <div className="flex items-start gap-4">
                 <div className="rounded-2xl bg-blue-50 p-3 text-blue-700">
                   <CreditCard className="h-5 w-5" />
                 </div>
                 <div>
-                  <p className="font-semibold text-slate-900">Stripe test mode</p>
-                  <p className="mt-1 text-sm text-slate-600">Create a secure Stripe Checkout session and return here after the test payment succeeds.</p>
+                  <p className="font-semibold text-slate-900 dark:text-slate-100">Stripe test mode</p>
+                  <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">Create a secure Stripe Checkout session and return here after the test payment succeeds.</p>
                 </div>
               </div>
               <span className="inline-flex items-center gap-1 text-sm font-semibold text-blue-700">
@@ -214,9 +214,9 @@ export function PaymentPage() {
 
 function Summary({ label, value }) {
   return (
-    <div className="rounded-[20px] bg-slate-50 p-4">
+    <div className="rounded-[20px] bg-slate-50 dark:bg-slate-900 p-4">
       <p className="text-xs uppercase tracking-[0.2em] text-slate-400">{label}</p>
-      <p className="mt-2 font-bold text-slate-900 capitalize">{value}</p>
+      <p className="mt-2 font-bold text-slate-900 dark:text-slate-100 capitalize">{value}</p>
     </div>
   )
 }

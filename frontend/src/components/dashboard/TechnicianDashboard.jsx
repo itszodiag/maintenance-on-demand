@@ -1,30 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  ArrowRight,
-  CalendarClock,
-  CheckCircle2,
-  ClipboardCheck,
-  FileBadge2,
-  Wrench,
-} from 'lucide-react';
-import {
-  Bar,
-  BarChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from 'recharts';
+import { Wrench, CheckCircle2, ClipboardCheck, CalendarClock, FileBadge2, ArrowRight } from 'lucide-react';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { serviceRequestsApi, technicianApi } from '../../api/modules.js';
 import dashboardApi from '../../api/dashboardApi.js';
-import {
-  extractCollection,
-  formatCompactNumber,
-  formatCurrency,
-  formatDate,
-  statusTone,
-} from '../../lib/dashboard.js';
+import { useLayoutStore } from '../../state/layoutStore.js';
+import { extractCollection, formatCompactNumber, formatCurrency, formatDate, statusTone } from '../../lib/dashboard.js';
 import { ChartCard } from './ChartCard.jsx';
 import { DataTable } from './DataTable.jsx';
 import { StatCard } from './StatCard.jsx';
@@ -66,6 +47,12 @@ export function TechnicianDashboard() {
 
     loadWorkspace();
   }, []);
+
+  const setHeader = useLayoutStore((state) => state.setHeader);
+
+  useEffect(() => {
+    setHeader('Technician Workspace', 'Stay on top of assigned tasks, availability, and delivery progress.');
+  }, [setHeader]);
 
   const requestStats = useMemo(() => {
     return requests.reduce(
@@ -357,15 +344,15 @@ function ActionLink({ to, icon: Icon, title, description }) {
   return (
     <Link
       to={to}
-      className="group flex items-center justify-between rounded-[24px] border border-slate-100 bg-slate-50/90 px-4 py-4 transition hover:border-blue-200 hover:bg-white hover:shadow-sm"
+      className="group flex items-center justify-between rounded-[24px] border border-slate-100 bg-slate-50 dark:bg-slate-900/90 px-4 py-4 transition hover:border-blue-200 hover:bg-white dark:bg-slate-950 hover:shadow-sm"
     >
       <div className="flex items-center gap-3">
-        <div className="flex h-12 w-12 items-center justify-center rounded-[18px] bg-white text-blue-600 shadow-sm">
+        <div className="flex h-12 w-12 items-center justify-center rounded-[18px] bg-white dark:bg-slate-950 text-blue-600 shadow-sm">
           <Icon className="h-5 w-5" />
         </div>
         <div>
-          <p className="font-semibold text-slate-900">{title}</p>
-          <p className="text-sm text-slate-500">{description}</p>
+          <p className="font-semibold text-slate-900 dark:text-slate-100">{title}</p>
+          <p className="text-sm text-slate-500 dark:text-slate-400">{description}</p>
         </div>
       </div>
       <ArrowRight className="h-4 w-4 text-slate-400 transition group-hover:text-blue-600" />
@@ -398,9 +385,9 @@ function StatusBadge({ value }) {
 
 function DashboardLoading({ label }) {
   return (
-    <div className="rounded-[30px] border border-white/70 bg-white/90 p-10 text-center shadow-[0_35px_80px_-45px_rgba(37,99,235,0.55)]">
-      <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
-      <p className="mt-4 text-sm font-medium text-slate-500">{label}</p>
+    <div className="rounded-[30px] border border-white/70 dark:border-slate-800/70 bg-white/90 dark:bg-slate-950/90 p-10 text-center shadow-[0_35px_80px_-45px_rgba(37,99,235,0.55)]">
+      <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-slate-200 dark:border-slate-800 border-t-blue-600" />
+      <p className="mt-4 text-sm font-medium text-slate-500 dark:text-slate-400">{label}</p>
     </div>
   );
 }

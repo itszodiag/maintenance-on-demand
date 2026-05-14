@@ -84,9 +84,9 @@ export function ChatWorkspace({
   return (
     <div className="grid gap-6 lg:grid-cols-[340px,1fr]">
       <div className="soft-panel overflow-hidden">
-        <div className="border-b border-blue-100 p-4">
+        <div className="border-b border-blue-100 dark:border-slate-800 p-4">
           <h3 className="text-lg font-bold">Conversations</h3>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             Recent chats with clients, providers, and vendors.
           </p>
         </div>
@@ -104,7 +104,7 @@ export function ChatWorkspace({
                   'flex w-full items-start gap-3 border-b border-blue-50 px-4 py-4 text-left transition',
                   selectedConversation?.id === conversation.id
                     ? 'bg-blue-50'
-                    : 'hover:bg-slate-50'
+                    : 'hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-900'
                 )}
               >
                 <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 font-bold text-blue-800">
@@ -114,14 +114,14 @@ export function ChatWorkspace({
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-center justify-between gap-3">
-                    <p className="truncate font-semibold text-slate-900">
+                    <p className="truncate font-semibold text-slate-900 dark:text-slate-100">
                       {partner?.display_name ?? partner?.name ?? 'Conversation'}
                     </p>
                     <span className="text-xs text-slate-400">
                       {dayjs(conversation.updated_at).format('HH:mm')}
                     </span>
                   </div>
-                  <p className="truncate text-sm text-slate-500">
+                  <p className="truncate text-sm text-slate-500 dark:text-slate-400">
                     {conversation.last_message?.body ??
                       'Open chat to start messaging'}
                   </p>
@@ -135,12 +135,12 @@ export function ChatWorkspace({
       <div className="soft-panel flex min-h-[720px] flex-col overflow-hidden">
         {selectedConversation ? (
           <>
-            <div className="flex items-center justify-between border-b border-blue-100 px-6 py-4">
+            <div className="flex items-center justify-between border-b border-blue-100 dark:border-slate-800 px-6 py-4">
               <div>
-                <p className="text-lg font-bold text-slate-900">
+                <p className="text-lg font-bold text-slate-900 dark:text-slate-100">
                   {activeParticipant?.display_name ?? activeParticipant?.name}
                 </p>
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-500 dark:text-slate-400">
                   {typingState
                     ? 'Typing…'
                     : activeParticipant?.is_online
@@ -190,7 +190,7 @@ export function ChatWorkspace({
               </div>
             </div>
 
-            <div className="flex-1 space-y-4 overflow-y-auto bg-slate-50/70 px-6 py-6">
+            <div className="flex-1 space-y-4 overflow-y-auto bg-slate-50 dark:bg-slate-900/70 px-6 py-6">
               {selectedConversation.messages?.map((message) => {
                 const mine = message.user?.id === currentUser?.id;
                 return (
@@ -206,7 +206,7 @@ export function ChatWorkspace({
                         'max-w-[75%] rounded-[24px] px-4 py-3 shadow-sm',
                         mine
                           ? 'bg-blue-700 text-white'
-                          : 'bg-white text-slate-800'
+                          : 'bg-white dark:bg-slate-950 text-slate-800 dark:text-slate-200'
                       )}
                     >
                       {message.image_url && (
@@ -236,7 +236,7 @@ export function ChatWorkspace({
 
             <form
               onSubmit={submit}
-              className="border-t border-blue-100 bg-white px-6 py-4"
+              className="border-t border-blue-100 dark:border-slate-800 bg-white dark:bg-slate-950 px-6 py-4"
             >
               <div className="flex flex-wrap items-center gap-3">
                 <label className="button-secondary cursor-pointer">
@@ -270,14 +270,14 @@ export function ChatWorkspace({
                 </button>
               </div>
               {image && (
-                <p className="mt-3 text-sm text-slate-500">
+                <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
                   Attached image: {image.name}
                 </p>
               )}
             </form>
           </>
         ) : (
-          <div className="flex flex-1 items-center justify-center text-slate-500">
+          <div className="flex flex-1 items-center justify-center text-slate-500 dark:text-slate-400">
             Choose a conversation to start chatting.
           </div>
         )}

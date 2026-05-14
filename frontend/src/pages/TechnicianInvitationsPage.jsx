@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CheckCircle, Mail, XCircle } from 'lucide-react';
 import { technicianApi } from '../api/modules.js';
-import { DashboardLayout } from '../components/dashboard/DashboardLayout.jsx';
+import { useLayoutStore } from '../state/layoutStore.js';
 import { extractCollection, formatDate } from '../lib/dashboard.js';
 
 export function TechnicianInvitationsPage() {
@@ -22,9 +22,12 @@ export function TechnicianInvitationsPage() {
     }
   };
 
+  const setHeader = useLayoutStore((state) => state.setHeader);
+
   useEffect(() => {
+    setHeader('Team Invitations', 'Manage your company team invitations and memberships.');
     loadPage();
-  }, []);
+  }, [setHeader]);
 
   const handleAccept = async (companyId) => {
     try {
@@ -55,13 +58,8 @@ export function TechnicianInvitationsPage() {
   };
 
   return (
-    <DashboardLayout
-      title="Team Invitations"
-      subtitle="Manage your company team invitations and memberships."
-      searchPlaceholder="Search invitations..."
-    >
-      <div className="space-y-6">
-        {feedback && (
+    <div className="space-y-6">
+      {feedback && (
           <div
             className={`rounded-[28px] px-6 py-4 text-sm font-semibold ${
               feedback.includes('Error')
@@ -74,19 +72,19 @@ export function TechnicianInvitationsPage() {
         )}
 
         {loading ? (
-          <div className="rounded-[30px] border border-white/70 bg-white/90 p-10 text-center shadow-sm">
-            <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
-            <p className="mt-4 text-sm font-medium text-slate-500">
+          <div className="rounded-[30px] border border-white/70 dark:border-slate-800/70 bg-white/90 dark:bg-slate-950/90 p-10 text-center shadow-sm">
+            <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-slate-200 dark:border-slate-800 border-t-blue-600" />
+            <p className="mt-4 text-sm font-medium text-slate-500 dark:text-slate-400">
               Loading invitations...
             </p>
           </div>
         ) : invitations.length === 0 ? (
-          <div className="rounded-[30px] border border-slate-200 bg-white px-6 py-12 text-center shadow-sm">
+          <div className="rounded-[30px] border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-6 py-12 text-center shadow-sm">
             <Mail className="mx-auto h-12 w-12 text-slate-300" />
-            <p className="mt-4 text-base font-semibold text-slate-900">
+            <p className="mt-4 text-base font-semibold text-slate-900 dark:text-slate-100">
               No invitations yet
             </p>
-            <p className="mt-2 text-sm text-slate-500">
+            <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">
               Companies will send you invitations to join their team.
             </p>
           </div>
@@ -95,16 +93,16 @@ export function TechnicianInvitationsPage() {
             {invitations.map((invitation) => (
               <div
                 key={invitation.id}
-                className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
+                className="rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 p-6 shadow-sm transition hover:shadow-md"
               >
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex-1">
-                    <h3 className="text-lg font-bold text-slate-900">
+                    <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
                       {invitation.company?.user?.display_name ||
                         invitation.company?.user?.name ||
                         'Company'}
                     </h3>
-                    <p className="mt-1 text-sm text-slate-500">
+                    <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                       {invitation.company?.description ||
                         'No description available'}
                     </p>
@@ -123,7 +121,7 @@ export function TechnicianInvitationsPage() {
                           href={`/storage/${invitation.file}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-200"
+                          className="inline-flex items-center gap-2 rounded-lg bg-slate-100 dark:bg-slate-800 px-3 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-200"
                         >
                           <Mail className="h-4 w-4" />
                           View Attachment
@@ -134,8 +132,8 @@ export function TechnicianInvitationsPage() {
                     <p className="mt-2 text-xs text-slate-400">
                       Invited on {formatDate(invitation.created_at)}
                     </p>
-                    <div className="mt-3 inline-flex rounded-full bg-slate-100 px-3 py-1">
-                      <span className="text-xs font-semibold text-slate-700 capitalize">
+                    <div className="mt-3 inline-flex rounded-full bg-slate-100 dark:bg-slate-800 px-3 py-1">
+                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 capitalize">
                         {invitation.status}
                       </span>
                     </div>
@@ -155,7 +153,7 @@ export function TechnicianInvitationsPage() {
                         <button
                           onClick={() => handleReject(invitation.company_id)}
                           disabled={actionId !== null}
-                          className="rounded-[18px] border border-slate-200 bg-slate-50 px-6 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-100 disabled:opacity-50"
+                          className="rounded-[18px] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-6 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 transition hover:bg-slate-100 dark:hover:bg-slate-800 dark:bg-slate-800 disabled:opacity-50"
                         >
                           Decline
                         </button>
@@ -177,7 +175,6 @@ export function TechnicianInvitationsPage() {
             ))}
           </div>
         )}
-      </div>
-    </DashboardLayout>
+    </div>
   );
 }

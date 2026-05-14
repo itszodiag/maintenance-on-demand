@@ -1,21 +1,21 @@
 import {
   Bell,
   BriefcaseBusiness,
-  ChevronDown,
-  LayoutDashboard,
-  LogOut,
   MapPinned,
   MessageCircle,
+  Moon,
   Search,
   ShoppingBag,
-  UserRound,
+  Sun,
 } from 'lucide-react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
-import { useMemo, useState } from 'react';
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { useMemo, useState, useEffect } from 'react';
 import clsx from 'clsx';
 import { useAuthStore } from '../../state/authStore.js';
+import { useThemeStore } from '../../state/themeStore.js';
 import { useNotificationPolling } from '../../state/notificationStore.js';
 import { ChatWidget } from '../ChatWidget.jsx';
+import { ProfileDropdown } from './ProfileDropdownNew.jsx';
 import { getDashboardPathForRole } from '../../lib/roleRoutes.js';
 
 const navItems = [
@@ -24,15 +24,24 @@ const navItems = [
   { label: 'Map', to: '/services?view=map', icon: MapPinned },
 ];
 
-export function AppLayout({ children, dashboard = false }) {
+export function AppLayout({ dashboard = false }) {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const theme = useThemeStore((state) => state.theme);
+  const toggleTheme = useThemeStore((state) => state.toggleTheme);
   const notifications = useNotificationPolling((state) => state.items);
   const unreadCount = useNotificationPolling((state) => state.unreadCount);
   const [query, setQuery] = useState('');
-  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+
   const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [avatarFailed, setAvatarFailed] = useState(false);
+
+  // DEBUG LOGGING
+  useEffect(() => {
+    console.log('[DEBUG] AppLayout MOUNTED');
+    return () => console.log('[DEBUG] AppLayout UNMOUNTED');
+  }, []);
 
   const recentNotifications = useMemo(
     () => notifications.slice(0, 5),
@@ -45,18 +54,14 @@ export function AppLayout({ children, dashboard = false }) {
   };
 
   const handleLogout = async () => {
-    setProfileMenuOpen(false);
     setNotificationsOpen(false);
     await logout();
     navigate('/');
   };
 
-  const initials = (user?.display_name ?? user?.name ?? 'MOD')
-    .split(' ')
-    .slice(0, 2)
-    .map((item) => item[0])
-    .join('')
-    .toUpperCase();
+  useEffect(() => {
+    setAvatarFailed(false);
+  }, [user?.avatar]);
 
   const getNotificationPath = (notification) => {
     const data = notification.data || {};
@@ -73,12 +78,12 @@ export function AppLayout({ children, dashboard = false }) {
   };
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(191,219,254,0.45),_transparent_35%),linear-gradient(180deg,_#f8fbff_0%,_#ffffff_35%,_#f8fbff_100%)] pb-16">
-      <header className="sticky top-0 z-40 border-b border-white/70 bg-white/80 backdrop-blur-xl">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(191,219,254,0.45),_transparent_35%),linear-gradient(180deg,_#f8fbff_0%,_#ffffff_35%,_#f8fbff_100%)] dark:bg-[radial-gradient(circle_at_top_left,_rgba(30,41,59,0.8),_transparent_35%),linear-gradient(180deg,_#0f172a_0%,_#1e293b_35%,_#0f172a_100%)] pb-16">
+      <header className="sticky top-0 z-40 border-b border-white/70 dark:border-slate-800/70 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl overflow-visible transition-colors duration-300">
         <div className="container-shell flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between overflow-visible">
           <div className="flex items-center gap-3">
             <Link to="/" className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-700 text-lg font-black text-white shadow-lg shadow-blue-200">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-700 text-lg font-black text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/50">
                 MOD
               </div>
             </Link>
@@ -86,18 +91,18 @@ export function AppLayout({ children, dashboard = false }) {
 
           <form
             onSubmit={handleSearch}
-            className="flex flex-1 items-center gap-3 rounded-full border border-blue-100 bg-slate-50 px-4 py-2 shadow-sm lg:mx-8"
+            className="flex flex-1 items-center gap-3 rounded-full border border-blue-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-2 shadow-sm lg:mx-8 dark:border-slate-700 dark:bg-slate-800"
           >
-            <Search className="h-4 w-4 text-blue-700" />
+            <Search className="h-4 w-4 text-blue-700 dark:text-blue-400" />
             <input
               value={query}
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search plumbing, tools, electricians, vendors..."
-              className="w-full bg-transparent text-sm outline-none"
+              className="w-full bg-transparent text-sm outline-none dark:text-slate-100 dark:placeholder:text-slate-400"
             />
             <button
               type="submit"
-              className="rounded-full bg-blue-700 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-blue-200"
+              className="rounded-full bg-blue-700 px-4 py-2 text-sm font-semibold text-white shadow-sm shadow-blue-200 dark:shadow-blue-900/50"
             >
               Search
             </button>
@@ -112,8 +117,8 @@ export function AppLayout({ children, dashboard = false }) {
                   clsx(
                     'inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition',
                     isActive
-                      ? 'bg-blue-700 text-white shadow-lg shadow-blue-200'
-                      : 'bg-white text-slate-700 hover:bg-blue-50'
+                      ? 'bg-blue-700 text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/50'
+                      : 'bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
                   )
                 }
               >
@@ -126,14 +131,26 @@ export function AppLayout({ children, dashboard = false }) {
               <>
                 <IconLink to="/chat" label="Chat" icon={MessageCircle} />
 
+                <button
+                  type="button"
+                  onClick={toggleTheme}
+                  className="inline-flex items-center gap-2 rounded-full bg-white dark:bg-slate-950 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 transition hover:bg-blue-50 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                  aria-label="Toggle dark mode"
+                >
+                  {theme === 'dark' ? (
+                    <Sun className="h-4 w-4" />
+                  ) : (
+                    <Moon className="h-4 w-4" />
+                  )}
+                </button>
+
                 <div className="relative z-50">
                   <button
                     type="button"
                     onClick={() => {
                       setNotificationsOpen((current) => !current);
-                      setProfileMenuOpen(false);
                     }}
-                    className="relative inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:bg-blue-50"
+                    className="relative inline-flex items-center gap-2 rounded-full bg-white dark:bg-slate-950 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 transition hover:bg-blue-50 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
                   >
                     <Bell className="h-4 w-4" />
                     Notifications
@@ -146,22 +163,22 @@ export function AppLayout({ children, dashboard = false }) {
 
                   {notificationsOpen && (
                     <div
-                      className="absolute right-0 top-full z-9999 mt-2 w-[340px] rounded-[24px] border border-blue-100 bg-white p-3 shadow-xl shadow-blue-100/60"
+                      className="absolute right-0 top-full z-9999 mt-2 w-[340px] rounded-[24px] border border-blue-100 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 shadow-xl shadow-blue-100/60 dark:shadow-none"
                       style={{ position: 'absolute', right: 0, top: '100%' }}
                     >
                       <div className="flex items-center justify-between px-2 pb-2">
                         <div>
-                          <p className="text-sm font-semibold text-slate-900">
+                          <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                             Notifications
                           </p>
-                          <p className="text-xs text-slate-500">
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
                             Messages, requests, and payment updates.
                           </p>
                         </div>
                         <Link
                           to="/notifications"
                           onClick={() => setNotificationsOpen(false)}
-                          className="text-sm font-semibold text-blue-700"
+                          className="text-sm font-semibold text-blue-700 dark:text-blue-400"
                         >
                           View all
                         </Link>
@@ -176,24 +193,24 @@ export function AppLayout({ children, dashboard = false }) {
                               onClick={() => setNotificationsOpen(false)}
                               className={clsx(
                                 'block rounded-[20px] px-4 py-3 transition hover:bg-blue-50',
-                                !item.read_at && 'bg-blue-50/70'
+                                !item.read_at && 'bg-blue-50/70 dark:bg-slate-800/70'
                               )}
                             >
-                              <p className="text-xs uppercase tracking-[0.24em] text-blue-700">
+                              <p className="text-xs uppercase tracking-[0.24em] text-blue-700 dark:text-blue-400">
                                 {item.type}
                               </p>
-                              <p className="mt-1 font-semibold text-slate-900">
+                              <p className="mt-1 font-semibold text-slate-900 dark:text-slate-100">
                                 {item.data?.title ??
                                   item.data?.sender_name ??
                                   'New activity'}
                               </p>
-                              <p className="mt-1 text-sm text-slate-600">
+                              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
                                 {item.data?.message}
                               </p>
                             </Link>
                           ))
                         ) : (
-                          <div className="rounded-[20px] bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+                          <div className="rounded-[20px] bg-slate-50 dark:bg-slate-900 px-4 py-6 text-center text-sm text-slate-500 dark:text-slate-400 dark:bg-slate-700 dark:text-slate-400">
                             You&apos;re all caught up.
                           </div>
                         )}
@@ -202,102 +219,12 @@ export function AppLayout({ children, dashboard = false }) {
                   )}
                 </div>
 
-                <div className="relative z-50">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setProfileMenuOpen((current) => !current);
-                      setNotificationsOpen(false);
-                    }}
-                    className="inline-flex items-center gap-3 rounded-full bg-white px-3 py-2 text-sm font-semibold text-slate-700 transition hover:bg-blue-50"
-                  >
-                    {user.avatar ? (
-                      <img
-                        src={user.avatar}
-                        alt={user.display_name}
-                        className="h-9 w-9 rounded-full object-cover"
-                      />
-                    ) : (
-                      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-blue-100 text-xs font-black text-blue-700">
-                        {initials}
-                      </div>
-                    )}
-                    <div className="hidden text-left lg:block">
-                      <p className="max-w-[140px] truncate text-sm font-semibold text-slate-900">
-                        {user.display_name}
-                      </p>
-                      <p className="max-w-[140px] truncate text-xs text-slate-500">
-                        {user.email}
-                      </p>
-                    </div>
-                    <ChevronDown className="h-4 w-4" />
-                  </button>
-
-                  {profileMenuOpen && (
-                    <div
-                      className="absolute right-0 top-full z-9999 mt-2 w-[300px] rounded-[24px] border border-blue-100 bg-white p-3 shadow-xl shadow-blue-100/60"
-                      style={{ position: 'absolute', right: 0, top: '100%' }}
-                    >
-                      <div className="rounded-[20px] bg-slate-50 p-4">
-                        <div className="flex items-center gap-3">
-                          {user.avatar ? (
-                            <img
-                              src={user.avatar}
-                              alt={user.display_name}
-                              className="h-12 w-12 rounded-full object-cover"
-                            />
-                          ) : (
-                            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-sm font-black text-blue-700">
-                              {initials}
-                            </div>
-                          )}
-                          <div className="min-w-0">
-                            <p className="truncate font-semibold text-slate-900">
-                              {user.display_name}
-                            </p>
-                            <p className="truncate text-sm text-slate-500">
-                              {user.email}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="mt-3 space-y-1">
-                        <ProfileMenuLink
-                          to="/profile"
-                          label="Profile"
-                          onClick={() => setProfileMenuOpen(false)}
-                        />
-                        <ProfileMenuLink
-                          to="/profile#orders"
-                          label="Orders"
-                          onClick={() => setProfileMenuOpen(false)}
-                        />
-                        <ProfileMenuLink
-                          to="/profile#favorites"
-                          label="Favorites"
-                          onClick={() => setProfileMenuOpen(false)}
-                        />
-                        {user.role !== 'client' && (
-                          <ProfileMenuLink
-                            to={getDashboardPathForRole(user.role)}
-                            label="Dashboard"
-                            icon={LayoutDashboard}
-                            onClick={() => setProfileMenuOpen(false)}
-                          />
-                        )}
-                        <button
-                          type="button"
-                          onClick={handleLogout}
-                          className="flex w-full items-center gap-3 rounded-[18px] px-4 py-3 text-left text-sm font-medium text-rose-600 transition hover:bg-rose-50"
-                        >
-                          <LogOut className="h-4 w-4" />
-                          Logout
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <ProfileDropdown
+                  user={user}
+                  onLogout={logout}
+                  avatarFailed={avatarFailed}
+                  setAvatarFailed={setAvatarFailed}
+                />
               </>
             )}
 
@@ -316,13 +243,13 @@ export function AppLayout({ children, dashboard = false }) {
           dashboard && 'lg:max-w-[1600px]'
         )}
       >
-        {children}
+        <Outlet />
       </main>
 
       <footer className="container-shell mt-16">
-        <div className="glass-card flex flex-col gap-4 px-6 py-8 text-sm text-slate-600 lg:flex-row lg:items-center lg:justify-between">
+        <div className="glass-card flex flex-col gap-4 px-6 py-8 text-sm text-slate-600 dark:text-slate-400 lg:flex-row lg:items-center lg:justify-between dark:text-slate-400">
           <div>
-            <p className="font-semibold text-slate-900">
+            <p className="font-semibold text-slate-900 dark:text-slate-100">
               Built for clients, technicians, companies, vendors, and admins.
             </p>
             <p>
@@ -344,18 +271,7 @@ export function AppLayout({ children, dashboard = false }) {
   );
 }
 
-function ProfileMenuLink({ to, label, onClick, icon: Icon = UserRound }) {
-  return (
-    <Link
-      to={to}
-      onClick={onClick}
-      className="flex items-center gap-3 rounded-[18px] px-4 py-3 text-sm font-medium text-slate-700 transition hover:bg-blue-50"
-    >
-      <Icon className="h-4 w-4" />
-      {label}
-    </Link>
-  );
-}
+
 
 function IconLink({ to, label, icon: Icon, count = 0 }) {
   return (
@@ -365,8 +281,8 @@ function IconLink({ to, label, icon: Icon, count = 0 }) {
         clsx(
           'relative inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition',
           isActive
-            ? 'bg-blue-700 text-white shadow-lg shadow-blue-200'
-            : 'bg-white text-slate-700 hover:bg-blue-50'
+            ? 'bg-blue-700 text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/50'
+            : 'bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700'
         )
       }
     >
@@ -386,15 +302,15 @@ export function SectionHeading({ eyebrow, title, description, action }) {
     <div className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
       <div>
         {eyebrow && (
-          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-700">
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-blue-700 dark:text-blue-400">
             {eyebrow}
           </p>
         )}
-        <h2 className="mt-2 text-3xl font-black tracking-tight text-slate-900">
+        <h2 className="mt-2 text-3xl font-black tracking-tight text-slate-900 dark:text-slate-100">
           {title}
         </h2>
         {description && (
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600 dark:text-slate-400">
             {description}
           </p>
         )}
@@ -432,22 +348,22 @@ export function StatCard({ label, value, tone = 'blue', hint }) {
 
 export function StatusBadge({ status }) {
   const colorMap = {
-    active: 'bg-emerald-100 text-emerald-700',
-    completed: 'bg-emerald-100 text-emerald-700',
-    accepted: 'bg-blue-100 text-blue-700',
-    pending: 'bg-amber-100 text-amber-700',
-    processing: 'bg-sky-100 text-sky-700',
-    paid: 'bg-emerald-100 text-emerald-700',
-    unpaid: 'bg-slate-100 text-slate-700',
-    rejected: 'bg-rose-100 text-rose-700',
-    cancelled: 'bg-rose-100 text-rose-700',
+    active: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+    completed: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+    accepted: 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+    pending: 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+    processing: 'bg-sky-100 text-sky-700 dark:bg-sky-900/30 dark:text-sky-400',
+    paid: 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+    unpaid: 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300',
+    rejected: 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400',
+    cancelled: 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400',
   };
 
   return (
     <span
       className={clsx(
         'status-pill capitalize',
-        colorMap[status] ?? 'bg-slate-100 text-slate-700'
+        colorMap[status] ?? 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
       )}
     >
       {status}
@@ -457,9 +373,9 @@ export function StatusBadge({ status }) {
 
 export function EmptyState({ title, description, action }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-[24px] border border-dashed border-blue-200 bg-blue-50/60 px-6 py-12 text-center">
-      <h3 className="text-lg font-bold text-slate-900">{title}</h3>
-      <p className="mt-2 max-w-md text-sm text-slate-600">{description}</p>
+    <div className="flex flex-col items-center justify-center rounded-[24px] border border-dashed border-blue-200 dark:border-slate-800 bg-blue-50/60 dark:bg-slate-900/60 px-6 py-12 text-center">
+      <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">{title}</h3>
+      <p className="mt-2 max-w-md text-sm text-slate-600 dark:text-slate-400">{description}</p>
       {action && <div className="mt-4">{action}</div>}
     </div>
   );

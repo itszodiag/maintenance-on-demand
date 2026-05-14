@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CalendarClock, FileBadge2, Upload, X } from 'lucide-react';
 import { technicianApi } from '../api/modules.js';
-import { DashboardLayout } from '../components/dashboard/DashboardLayout.jsx';
+import { useLayoutStore } from '../state/layoutStore.js';
 import { ChartCard } from '../components/dashboard/ChartCard.jsx';
 import { DataTable } from '../components/dashboard/DataTable.jsx';
 import { StatCard } from '../components/dashboard/StatCard.jsx';
@@ -46,9 +46,12 @@ export function TechnicianReportsPage() {
     }
   };
 
+  const setHeader = useLayoutStore((state) => state.setHeader);
+
   useEffect(() => {
+    setHeader('Reports & Qualifications', 'Manage the documents and schedule data that support your technician profile.');
     loadPage();
-  }, []);
+  }, [setHeader]);
 
   const submitAvailability = async (event) => {
     event.preventDefault();
@@ -114,13 +117,8 @@ export function TechnicianReportsPage() {
   };
 
   return (
-    <DashboardLayout
-      title="Reports & Qualifications"
-      subtitle="Manage the documents and schedule data that support your technician profile."
-      searchPlaceholder="Search certifications, availability..."
-    >
-      <div className="space-y-6">
-        {feedback && <FeedbackBanner message={feedback} />}
+    <div className="space-y-6">
+      {feedback && <FeedbackBanner message={feedback} />}
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <StatCard
@@ -166,7 +164,7 @@ export function TechnicianReportsPage() {
                 height="h-auto"
               >
                 <form className="space-y-4" onSubmit={submitAvailability}>
-                  <label className="block text-sm font-semibold text-slate-700">
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Starts at
                     <input
                       type="datetime-local"
@@ -177,11 +175,11 @@ export function TechnicianReportsPage() {
                           starts_at: event.target.value,
                         }))
                       }
-                      className="mt-2 w-full rounded-[18px] border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                      className="mt-2 w-full rounded-[18px] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-sm text-slate-700 dark:text-slate-300 outline-none focus:border-blue-400 dark:focus:border-blue-400 focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-950 focus:ring-4 focus:ring-blue-100"
                       required
                     />
                   </label>
-                  <label className="block text-sm font-semibold text-slate-700">
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Ends at
                     <input
                       type="datetime-local"
@@ -192,7 +190,7 @@ export function TechnicianReportsPage() {
                           ends_at: event.target.value,
                         }))
                       }
-                      className="mt-2 w-full rounded-[18px] border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                      className="mt-2 w-full rounded-[18px] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-sm text-slate-700 dark:text-slate-300 outline-none focus:border-blue-400 dark:focus:border-blue-400 focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-950 focus:ring-4 focus:ring-blue-100"
                       required
                     />
                   </label>
@@ -212,7 +210,7 @@ export function TechnicianReportsPage() {
                 height="h-auto"
               >
                 <form className="space-y-4" onSubmit={submitCertification}>
-                  <label className="block text-sm font-semibold text-slate-700">
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
                     Title
                     <input
                       type="text"
@@ -223,12 +221,12 @@ export function TechnicianReportsPage() {
                           title: event.target.value,
                         }))
                       }
-                      className="mt-2 w-full rounded-[18px] border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                      className="mt-2 w-full rounded-[18px] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-sm text-slate-700 dark:text-slate-300 outline-none focus:border-blue-400 dark:focus:border-blue-400 focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-950 focus:ring-4 focus:ring-blue-100"
                       required
                     />
                   </label>
                   <div className="grid gap-4 sm:grid-cols-2">
-                    <label className="block text-sm font-semibold text-slate-700">
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
                       Organization
                       <input
                         type="text"
@@ -239,10 +237,10 @@ export function TechnicianReportsPage() {
                             organization: event.target.value,
                           }))
                         }
-                        className="mt-2 w-full rounded-[18px] border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                        className="mt-2 w-full rounded-[18px] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-sm text-slate-700 dark:text-slate-300 outline-none focus:border-blue-400 dark:focus:border-blue-400 focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-950 focus:ring-4 focus:ring-blue-100"
                       />
                     </label>
-                    <label className="block text-sm font-semibold text-slate-700">
+                    <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
                       Year
                       <input
                         type="number"
@@ -253,11 +251,11 @@ export function TechnicianReportsPage() {
                             year: event.target.value,
                           }))
                         }
-                        className="mt-2 w-full rounded-[18px] border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none focus:border-blue-400 focus:bg-white focus:ring-4 focus:ring-blue-100"
+                        className="mt-2 w-full rounded-[18px] border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-3 text-sm text-slate-700 dark:text-slate-300 outline-none focus:border-blue-400 dark:focus:border-blue-400 focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-950 focus:ring-4 focus:ring-blue-100"
                       />
                     </label>
                   </div>
-                  <label className="block text-sm font-semibold text-slate-700">
+                  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">
                     File
                     <input
                       type="file"
@@ -268,7 +266,7 @@ export function TechnicianReportsPage() {
                           file: event.target.files?.[0] || null,
                         }))
                       }
-                      className="mt-2 block w-full text-sm text-slate-600"
+                      className="mt-2 block w-full text-sm text-slate-600 dark:text-slate-400"
                       required
                     />
                   </label>
@@ -309,7 +307,7 @@ export function TechnicianReportsPage() {
                       type="button"
                       onClick={() => removeAvailability(slot.id)}
                       disabled={submitting === `remove-${slot.id}`}
-                      className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-60"
+                      className="inline-flex items-center gap-2 rounded-full bg-slate-100 dark:bg-slate-800 px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-400 transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-60"
                     >
                       <X className="h-3.5 w-3.5" />
                       {submitting === `remove-${slot.id}` ? 'Removing...' : 'Remove'}
@@ -345,14 +343,13 @@ export function TechnicianReportsPage() {
             </div>
           </>
         )}
-      </div>
-    </DashboardLayout>
+    </div>
   );
 }
 
 function FeedbackBanner({ message }) {
   return (
-    <div className="rounded-[24px] border border-blue-100 bg-blue-50 px-5 py-3 text-sm text-blue-700">
+    <div className="rounded-[24px] border border-blue-100 dark:border-slate-800 bg-blue-50 px-5 py-3 text-sm text-blue-700">
       {message}
     </div>
   );
@@ -360,9 +357,9 @@ function FeedbackBanner({ message }) {
 
 function LoadingPanel({ label }) {
   return (
-    <div className="rounded-[30px] border border-white/70 bg-white/90 p-10 text-center shadow-[0_35px_80px_-45px_rgba(37,99,235,0.55)]">
-      <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
-      <p className="mt-4 text-sm font-medium text-slate-500">{label}</p>
+    <div className="rounded-[30px] border border-white/70 dark:border-slate-800/70 bg-white/90 dark:bg-slate-950/90 p-10 text-center shadow-[0_35px_80px_-45px_rgba(37,99,235,0.55)]">
+      <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-slate-200 dark:border-slate-800 border-t-blue-600" />
+      <p className="mt-4 text-sm font-medium text-slate-500 dark:text-slate-400">{label}</p>
     </div>
   );
 }

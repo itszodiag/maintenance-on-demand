@@ -1,17 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CircleDollarSign, PackageCheck, ShoppingCart, Truck } from 'lucide-react';
 import { ordersApi } from '../api/modules.js';
-import { DashboardLayout } from '../components/dashboard/DashboardLayout.jsx';
+import { useLayoutStore } from '../state/layoutStore.js';
 import { ChartCard } from '../components/dashboard/ChartCard.jsx';
 import { DataTable } from '../components/dashboard/DataTable.jsx';
 import { StatCard } from '../components/dashboard/StatCard.jsx';
-import {
-  extractCollection,
-  formatCompactNumber,
-  formatCurrency,
-  formatDate,
-  statusTone,
-} from '../lib/dashboard.js';
+import { extractCollection, formatCompactNumber, formatCurrency, formatDate, statusTone } from '../lib/dashboard.js';
 
 const orderStates = ['paid', 'completed', 'cancelled'];
 
@@ -33,9 +27,12 @@ export function VendorOrdersPage() {
     }
   };
 
+  const setHeader = useLayoutStore((state) => state.setHeader);
+
   useEffect(() => {
+    setHeader('Order Operations', 'Track vendor orders, payment state, and fulfillment progress.');
     loadOrders();
-  }, []);
+  }, [setHeader]);
 
   const stats = useMemo(() => {
     return orders.reduce(
@@ -67,13 +64,8 @@ export function VendorOrdersPage() {
   };
 
   return (
-    <DashboardLayout
-      title="Order Operations"
-      subtitle="Track vendor orders, payment state, and fulfillment progress."
-      searchPlaceholder="Search orders, clients, cities..."
-    >
-      <div className="space-y-6">
-        {feedback && <FeedbackBanner message={feedback} />}
+    <div className="space-y-6">
+      {feedback && <FeedbackBanner message={feedback} />}
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <StatCard
@@ -115,7 +107,7 @@ export function VendorOrdersPage() {
               description="Use the existing order status endpoint to keep order progress up to date."
               height="h-auto"
             >
-              <p className="text-sm leading-6 text-slate-500">
+              <p className="text-sm leading-6 text-slate-500 dark:text-slate-400">
                 Vendors can mark orders as paid, completed, or cancelled from
                 this queue without touching any backend structure.
               </p>
@@ -154,7 +146,7 @@ export function VendorOrdersPage() {
                         className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
                           order.status === status || order.payment_status === status
                             ? 'bg-slate-900 text-white'
-                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                            : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
                         } disabled:cursor-not-allowed disabled:opacity-60`}
                       >
                         {actionId === order.id ? 'Saving...' : capitalize(status)}
@@ -167,8 +159,7 @@ export function VendorOrdersPage() {
             />
           </>
         )}
-      </div>
-    </DashboardLayout>
+    </div>
   );
 }
 
@@ -192,7 +183,7 @@ function StatusBadge({ value }) {
 
 function FeedbackBanner({ message }) {
   return (
-    <div className="rounded-[24px] border border-blue-100 bg-blue-50 px-5 py-3 text-sm text-blue-700">
+    <div className="rounded-[24px] border border-blue-100 dark:border-slate-800 bg-blue-50 px-5 py-3 text-sm text-blue-700">
       {message}
     </div>
   );
@@ -200,9 +191,9 @@ function FeedbackBanner({ message }) {
 
 function LoadingPanel({ label }) {
   return (
-    <div className="rounded-[30px] border border-white/70 bg-white/90 p-10 text-center shadow-[0_35px_80px_-45px_rgba(37,99,235,0.55)]">
-      <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
-      <p className="mt-4 text-sm font-medium text-slate-500">{label}</p>
+    <div className="rounded-[30px] border border-white/70 dark:border-slate-800/70 bg-white/90 dark:bg-slate-950/90 p-10 text-center shadow-[0_35px_80px_-45px_rgba(37,99,235,0.55)]">
+      <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-slate-200 dark:border-slate-800 border-t-blue-600" />
+      <p className="mt-4 text-sm font-medium text-slate-500 dark:text-slate-400">{label}</p>
     </div>
   );
 }

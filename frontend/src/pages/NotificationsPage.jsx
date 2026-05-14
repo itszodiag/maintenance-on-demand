@@ -27,8 +27,8 @@ export function NotificationsPage() {
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-sm uppercase tracking-[0.24em] text-blue-700">{item.type}</p>
-                <p className="mt-2 font-semibold text-slate-900">{item.data.title ?? 'New activity'}</p>
-                <p className="mt-2 text-sm text-slate-600">{item.data.message ?? item.data.body ?? 'You have a new platform notification.'}</p>
+                <p className="mt-2 font-semibold text-slate-900 dark:text-slate-100">{item.data.title ?? 'New activity'}</p>
+                <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{item.data.message ?? item.data.body ?? 'You have a new platform notification.'}</p>
               </div>
               <p className="text-sm text-slate-400">{dayjs(item.created_at).format('MMM D, HH:mm')}</p>
             </div>

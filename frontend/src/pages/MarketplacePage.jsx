@@ -65,7 +65,7 @@ export function MarketplacePage() {
         <input className="field" type="number" min="0" placeholder="Max price" value={filters.max_price} onChange={(event) => setFilters((current) => ({ ...current, max_price: event.target.value }))} />
       </div>
 
-      {loading && <div className="soft-panel p-6 text-slate-500">Loading products...</div>}
+      {loading && <div className="soft-panel p-6 text-slate-500 dark:text-slate-400">Loading products...</div>}
       {!loading && !products.length && <EmptyState title="No products found" description="Try another city, brand, or budget range." />}
 
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
@@ -81,7 +81,7 @@ export function MarketplacePage() {
             <div className="p-5">
               <p className="text-xs uppercase tracking-[0.24em] text-blue-700">{product.speciality}</p>
               <Link to={`/products/${product.id}`} className="mt-2 block text-lg font-bold">{product.title}</Link>
-              <p className="mt-2 text-sm text-slate-500">{product.brand} | {product.city}</p>
+              <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{product.brand} | {product.city}</p>
               <p className="mt-3 text-2xl font-black text-blue-800">{product.price} MAD</p>
               <div className="mt-4 flex flex-wrap gap-2">
                 <button

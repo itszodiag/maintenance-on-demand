@@ -14,7 +14,7 @@ const moroccoCenter = [31.7917, -7.0926]
 
 export function MoroccoMap({ markers = [], height = 420, linkPrefix = '/services' }) {
   return (
-    <div style={{ height }} className="overflow-hidden rounded-[24px] border border-blue-100 shadow-sm">
+    <div style={{ height }} className="overflow-hidden rounded-[24px] border border-blue-100 dark:border-slate-800 shadow-sm">
       <MapContainer center={moroccoCenter} zoom={6} scrollWheelZoom className="z-0">
         <TileLayer
           attribution='&copy; OpenStreetMap contributors'
@@ -27,7 +27,7 @@ export function MoroccoMap({ markers = [], height = 420, linkPrefix = '/services
               <Popup>
                 <div className="space-y-1">
                   <p className="font-semibold">{marker.title}</p>
-                  <p className="text-sm text-slate-500">{marker.city}</p>
+                  <p className="text-sm text-slate-500 dark:text-slate-400">{marker.city}</p>
                   <Link to={`${linkPrefix}/${marker.id}`} className="text-sm font-semibold text-blue-700">
                     View details
                   </Link>

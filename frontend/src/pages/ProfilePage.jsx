@@ -15,7 +15,9 @@ export function ProfilePage() {
   const token = useAuthStore((state) => state.token);
   const [profile, setProfile] = useState(null);
   const [form, setForm] = useState({
+    display_name: '',
     name: '',
+    email: '',
     phone: '',
     bio: '',
     city: '',
@@ -30,7 +32,9 @@ export function ProfilePage() {
     const data = await profileApi.get();
     setProfile(data);
     setForm({
+      display_name: data.user.display_name ?? '',
       name: data.user.name ?? '',
+      email: data.user.email ?? '',
       phone: data.user.phone ?? '',
       bio: data.user.bio ?? '',
       city: data.user.city ?? '',
@@ -55,7 +59,7 @@ export function ProfilePage() {
 
   if (!profile) {
     return (
-      <div className="soft-panel p-6 text-slate-500">Loading profile...</div>
+      <div className="soft-panel p-6 text-slate-500 dark:text-slate-400">Loading profile...</div>
     );
   }
 
@@ -88,7 +92,7 @@ export function ProfilePage() {
       <div className="grid gap-6 xl:grid-cols-[0.9fr,1.1fr]">
         <SectionCard>
           <form onSubmit={saveProfile} className="grid gap-4">
-            <div className="flex items-center gap-4 rounded-[24px] bg-slate-50 p-4">
+            <div className="flex items-center gap-4 rounded-[24px] bg-slate-50 dark:bg-slate-900 p-4">
               {profile.user.avatar ? (
                 <img
                   src={profile.user.avatar}
@@ -101,12 +105,30 @@ export function ProfilePage() {
                 </div>
               )}
               <div>
-                <p className="font-semibold text-slate-900">
+                <p className="font-semibold text-slate-900 dark:text-slate-100">
                   {profile.user.display_name}
                 </p>
-                <p className="text-sm text-slate-500">{profile.user.email}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{profile.user.email}</p>
               </div>
             </div>
+            <input
+              className="field"
+              placeholder="Display name"
+              value={form.display_name}
+              onChange={(event) =>
+                setForm((current) => ({ ...current, display_name: event.target.value }))
+              }
+              required
+            />
+            <input
+              className="field"
+              placeholder="Email"
+              type="email"
+              value={form.email}
+              onChange={(event) =>
+                setForm((current) => ({ ...current, email: event.target.value }))
+              }
+            />
             <input
               className="field"
               placeholder="Name"
@@ -223,12 +245,12 @@ export function ProfilePage() {
               {profile.orders.map((order) => (
                 <div
                   key={order.id}
-                  className="rounded-[20px] border border-blue-100 p-4"
+                  className="rounded-[20px] border border-blue-100 dark:border-slate-800 p-4"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
                       <p className="font-semibold">Order #{order.id}</p>
-                      <p className="mt-1 text-sm text-slate-500">
+                      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                         {order.total} MAD | {order.city}
                       </p>
                     </div>
@@ -259,12 +281,12 @@ export function ProfilePage() {
               {profile.requests.map((request) => (
                 <div
                   key={request.id}
-                  className="rounded-[20px] border border-blue-100 p-4"
+                  className="rounded-[20px] border border-blue-100 dark:border-slate-800 p-4"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
                       <p className="font-semibold">{request.service?.title}</p>
-                      <p className="mt-1 text-sm text-slate-500">
+                      <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
                         {request.address} | {request.city}
                       </p>
                     </div>
@@ -277,7 +299,7 @@ export function ProfilePage() {
                       )}
                     </div>
                   </div>
-                  <p className="mt-3 text-sm text-slate-600">
+                  <p className="mt-3 text-sm text-slate-600 dark:text-slate-400">
                     {request.description}
                   </p>
                   {request.images?.length > 0 && (
@@ -315,7 +337,7 @@ export function ProfilePage() {
                       )}
 
                     {request.status === 'accepted' && !request.order && (
-                      <p className="text-sm text-slate-500">
+                      <p className="text-sm text-slate-500 dark:text-slate-400">
                         Waiting for provider to send payment request.
                       </p>
                     )}
@@ -334,12 +356,12 @@ export function ProfilePage() {
                 <Link
                   key={`${item.href}-${item.id}`}
                   to={item.href}
-                  className="rounded-[20px] border border-blue-100 p-4 transition hover:bg-blue-50"
+                  className="rounded-[20px] border border-blue-100 dark:border-slate-800 p-4 transition hover:bg-blue-50"
                 >
-                  <p className="font-semibold text-slate-900">
+                  <p className="font-semibold text-slate-900 dark:text-slate-100">
                     {item.title ?? item.display_name}
                   </p>
-                  <p className="mt-1 text-sm text-slate-500">{item.label}</p>
+                  <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{item.label}</p>
                 </Link>
               ))}
             </div>
@@ -354,7 +376,7 @@ function SummaryBox({ label, value, icon: Icon }) {
   return (
     <div className="rounded-[20px] bg-blue-50 p-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-slate-500">{label}</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">{label}</p>
         <Icon className="h-4 w-4 text-blue-700" />
       </div>
       <p className="mt-2 text-2xl font-black text-blue-800">{value}</p>

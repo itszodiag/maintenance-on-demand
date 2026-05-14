@@ -69,6 +69,6 @@ export function statusTone(status) {
     case 'inactive':
       return 'bg-rose-50 text-rose-700';
     default:
-      return 'bg-slate-100 text-slate-600';
+      return 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400';
   }
 }

@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Boxes, CheckCircle2, Clock3, Package, Pencil, Plus, Trash2, XCircle } from 'lucide-react';
 import { adminApi } from '../api/modules.js';
+import { useLayoutStore } from '../state/layoutStore.js';
 import { ChartCard } from '../components/dashboard/ChartCard.jsx';
-import { DashboardLayout } from '../components/dashboard/DashboardLayout.jsx';
 import { DataTable } from '../components/dashboard/DataTable.jsx';
 import { StatCard } from '../components/dashboard/StatCard.jsx';
 import {
@@ -58,9 +58,12 @@ export function AdminProductsPage() {
     }
   };
 
+  const setHeader = useLayoutStore((state) => state.setHeader);
+
   useEffect(() => {
+    setHeader('Product Control', 'Manage vendor catalog entries with full admin CRUD.');
     loadPage();
-  }, []);
+  }, [setHeader]);
 
   const counts = useMemo(() => {
     return products.reduce(
@@ -154,112 +157,106 @@ export function AdminProductsPage() {
   };
 
   return (
-    <DashboardLayout
-      title="Product Control"
-      subtitle="Manage vendor catalog entries with full admin CRUD."
-      searchPlaceholder="Search products, vendors, brands..."
-    >
-      <div className="space-y-6">
-        {feedback ? <FeedbackBanner message={feedback} /> : null}
+    <div className="space-y-6">
+      {feedback ? <FeedbackBanner message={feedback} /> : null}
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          <StatCard
-            icon={Package}
-            label="All products"
-            value={formatCompactNumber(counts.total)}
-            hint="Vendor catalog entries"
-            tone="blue"
-          />
-          <StatCard
-            icon={Clock3}
-            label="Pending"
-            value={formatCompactNumber(counts.pending)}
-            hint="Waiting for review"
-            tone="mint"
-          />
-          <StatCard
-            icon={CheckCircle2}
-            label="Active"
-            value={formatCompactNumber(counts.active)}
-            hint="Visible for sale"
-            tone="peach"
-          />
-          <StatCard
-            icon={Boxes}
-            label="Rejected"
-            value={formatCompactNumber(counts.rejected)}
-            hint="Blocked from sale"
-            tone="slate"
-          />
-        </div>
-
-        <ChartCard
-          title="Catalog actions"
-          description="Products can now be created, updated, or removed from the admin dashboard."
-          height="h-auto"
-        >
-          <div className="flex flex-wrap items-center gap-3">
-            {productStatuses.map((status) => (
-              <span
-                key={status}
-                className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${statusTone(status)}`}
-              >
-                {capitalize(status)}
-              </span>
-            ))}
-            <button
-              type="button"
-              onClick={openCreate}
-              className="ml-auto inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
-            >
-              <Plus className="h-4 w-4" />
-              Create Product
-            </button>
-          </div>
-        </ChartCard>
-
-        {loading ? (
-          <LoadingPanel label="Loading products..." />
-        ) : (
-          <DataTable
-            title="Managed products"
-            columns={[
-              'Title',
-              'Vendor',
-              'Category',
-              'Price',
-              'Status',
-              'Actions',
-            ]}
-            data={products.map((product) => ({
-              id: product.id,
-              Title: product.title,
-              Vendor:
-                product.vendor?.display_name || product.vendor?.name || 'Vendor',
-              Category: product.category || '-',
-              Price: formatCurrency(product.price),
-              Status: <StatusBadge value={product.status || 'pending'} />,
-              Actions: (
-                <div className="flex flex-wrap gap-2">
-                  <ActionButton
-                    label="Edit"
-                    icon={Pencil}
-                    onClick={() => openEdit(product)}
-                  />
-                  <ActionButton
-                    label="Delete"
-                    icon={Trash2}
-                    tone="danger"
-                    onClick={() => deleteProduct(product)}
-                    disabled={actionId === product.id}
-                  />
-                </div>
-              ),
-            }))}
-            emptyLabel="No products found."
-          />
-        )}
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <StatCard
+          icon={Package}
+          label="All products"
+          value={formatCompactNumber(counts.total)}
+          hint="Vendor catalog entries"
+          tone="blue"
+        />
+        <StatCard
+          icon={Clock3}
+          label="Pending"
+          value={formatCompactNumber(counts.pending)}
+          hint="Waiting for review"
+          tone="mint"
+        />
+        <StatCard
+          icon={CheckCircle2}
+          label="Active"
+          value={formatCompactNumber(counts.active)}
+          hint="Visible for sale"
+          tone="peach"
+        />
+        <StatCard
+          icon={Boxes}
+          label="Rejected"
+          value={formatCompactNumber(counts.rejected)}
+          hint="Blocked from sale"
+          tone="slate"
+        />
       </div>
+
+      <ChartCard
+        title="Catalog actions"
+        description="Products can now be created, updated, or removed from the admin dashboard."
+        height="h-auto"
+      >
+        <div className="flex flex-wrap items-center gap-3">
+          {productStatuses.map((status) => (
+            <span
+              key={status}
+              className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${statusTone(status)}`}
+            >
+              {capitalize(status)}
+            </span>
+          ))}
+          <button
+            type="button"
+            onClick={openCreate}
+            className="ml-auto inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
+          >
+            <Plus className="h-4 w-4" />
+            Create Product
+          </button>
+        </div>
+      </ChartCard>
+
+      {loading ? (
+        <LoadingPanel label="Loading products..." />
+      ) : (
+        <DataTable
+          title="Managed products"
+          columns={[
+            'Title',
+            'Vendor',
+            'Category',
+            'Price',
+            'Status',
+            'Actions',
+          ]}
+          data={products.map((product) => ({
+            id: product.id,
+            Title: product.title,
+            Vendor:
+              product.vendor?.display_name || product.vendor?.name || 'Vendor',
+            Category: product.category || '-',
+            Price: formatCurrency(product.price),
+            Status: <StatusBadge value={product.status || 'pending'} />,
+            Actions: (
+              <div className="flex flex-wrap gap-2">
+                <ActionButton
+                  label="Edit"
+                  icon={Pencil}
+                  onClick={() => openEdit(product)}
+                />
+                <ActionButton
+                  label="Delete"
+                  icon={Trash2}
+                  tone="danger"
+                  onClick={() => deleteProduct(product)}
+                  disabled={actionId === product.id}
+                />
+              </div>
+            ),
+          }))}
+          emptyLabel="No products found."
+        />
+      )}
 
       {editor ? (
         <ProductEditorModal
@@ -272,7 +269,7 @@ export function AdminProductsPage() {
           loading={saving}
         />
       ) : null}
-    </DashboardLayout>
+    </div>
   );
 }
 
@@ -426,7 +423,7 @@ function ActionButton({ label, icon: Icon, tone = 'default', ...props }) {
       className={`inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
         tone === 'danger'
           ? 'bg-rose-50 text-rose-700 hover:bg-rose-100'
-          : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+          : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200'
       } disabled:cursor-not-allowed disabled:opacity-60`}
       {...props}
     >
@@ -448,7 +445,7 @@ function StatusBadge({ value }) {
 
 function Field({ label, children }) {
   return (
-    <label className="grid gap-2 text-sm font-medium text-slate-700">
+    <label className="grid gap-2 text-sm font-medium text-slate-700 dark:text-slate-300">
       <span>{label}</span>
       {children}
     </label>
@@ -458,16 +455,16 @@ function Field({ label, children }) {
 function ModalShell({ title, subtitle, onClose, children }) {
   return (
     <div className="fixed inset-0 z-[120] flex items-center justify-center bg-slate-950/55 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-3xl rounded-[28px] border border-slate-200 bg-white shadow-2xl">
+      <div className="w-full max-w-3xl rounded-[28px] border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 shadow-2xl">
         <div className="flex items-start justify-between gap-4 border-b border-slate-100 px-6 py-5">
           <div>
-            <h2 className="text-xl font-bold text-slate-900">{title}</h2>
-            <p className="mt-1 text-sm text-slate-500">{subtitle}</p>
+            <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">{title}</h2>
+            <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{subtitle}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 hover:text-slate-600"
+            className="rounded-full p-2 text-slate-400 transition hover:bg-slate-100 dark:hover:bg-slate-800 dark:bg-slate-800 hover:text-slate-600 dark:text-slate-400"
           >
             <XCircle className="h-5 w-5" />
           </button>
@@ -484,7 +481,7 @@ function ModalActions({ loading, submitLabel, onClose, onSubmit }) {
       <button
         type="button"
         onClick={onClose}
-        className="rounded-full px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
+        className="rounded-full px-4 py-2 text-sm font-semibold text-slate-600 dark:text-slate-400 transition hover:bg-slate-100 dark:hover:bg-slate-800 dark:bg-slate-800"
       >
         Cancel
       </button>
@@ -502,7 +499,7 @@ function ModalActions({ loading, submitLabel, onClose, onSubmit }) {
 
 function FeedbackBanner({ message }) {
   return (
-    <div className="rounded-[24px] border border-blue-100 bg-blue-50 px-5 py-3 text-sm text-blue-700">
+    <div className="rounded-[24px] border border-blue-100 dark:border-slate-800 bg-blue-50 px-5 py-3 text-sm text-blue-700">
       {message}
     </div>
   );
@@ -510,9 +507,9 @@ function FeedbackBanner({ message }) {
 
 function LoadingPanel({ label }) {
   return (
-    <div className="rounded-[30px] border border-white/70 bg-white/90 p-10 text-center shadow-[0_35px_80px_-45px_rgba(37,99,235,0.55)]">
-      <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
-      <p className="mt-4 text-sm font-medium text-slate-500">{label}</p>
+    <div className="rounded-[30px] border border-white/70 dark:border-slate-800/70 bg-white/90 dark:bg-slate-950/90 p-10 text-center shadow-[0_35px_80px_-45px_rgba(37,99,235,0.55)]">
+      <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-slate-200 dark:border-slate-800 border-t-blue-600" />
+      <p className="mt-4 text-sm font-medium text-slate-500 dark:text-slate-400">{label}</p>
     </div>
   );
 }
@@ -526,4 +523,4 @@ function capitalize(value) {
 }
 
 const inputClassName =
-  'w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-700 outline-none transition focus:border-blue-400 focus:bg-white focus:ring-2 focus:ring-blue-100';
+  'w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-2.5 text-sm text-slate-700 dark:text-slate-300 outline-none transition focus:border-blue-400 dark:focus:border-blue-400 focus:bg-white dark:focus:bg-slate-900 dark:bg-slate-950 focus:ring-2 focus:ring-blue-100';

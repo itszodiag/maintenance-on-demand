@@ -51,7 +51,7 @@ export function ListingsMap({ items, activeId, onActiveChange, focusTarget, heig
   const clusters = useMemo(() => clusterItems(items, zoom), [items, zoom])
 
   return (
-    <div className="overflow-hidden rounded-[32px] border border-blue-100 shadow-xl shadow-blue-100/50" style={{ height }}>
+    <div className="overflow-hidden rounded-[32px] border border-blue-100 dark:border-slate-800 shadow-xl shadow-blue-100/50" style={{ height }}>
       <style>{`
         .map-price-badge {
           min-width: 76px;
@@ -127,8 +127,8 @@ export function ListingsMap({ items, activeId, onActiveChange, focusTarget, heig
                 <div className="w-56 space-y-3">
                   {item.images?.[0]?.url && <img src={item.images[0].url} alt={item.title} className="h-28 w-full rounded-xl object-cover" />}
                   <div>
-                    <p className="font-semibold text-slate-900">{item.title}</p>
-                    <p className="text-sm text-slate-500">{item.city}</p>
+                    <p className="font-semibold text-slate-900 dark:text-slate-100">{item.title}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{item.city}</p>
                     <p className="mt-1 font-bold text-blue-700">{item.price} DH</p>
                   </div>
                   <Link to={`/services/${item.id}`} className="text-sm font-semibold text-blue-700">

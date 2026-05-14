@@ -73,19 +73,19 @@ export function DashboardSidebar() {
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        className="fixed left-4 top-4 z-[120] flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-slate-700 shadow-lg lg:hidden"
+        className="fixed left-4 top-4 z-[120] flex h-11 w-11 items-center justify-center rounded-2xl bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-300 shadow-lg lg:hidden"
       >
         {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
       </button>
 
       <aside
         className={clsx(
-          'fixed inset-y-0 left-0 z-[110] w-[270px] transform border-r border-white/70 bg-white/90 px-5 pb-6 pt-5 shadow-[0_35px_90px_-45px_rgba(37,99,235,0.55)] backdrop-blur-xl transition-transform duration-300 lg:translate-x-0',
-          open ? 'translate-x-0' : '-translate-x-full'
+          'fixed inset-y-0 left-0 z-50 w-[270px] border-r border-white/70 dark:border-slate-800/70 bg-white/90 dark:bg-slate-950/90 px-5 pb-6 pt-5 shadow-[0_35px_90px_-45px_rgba(37,99,235,0.55)] backdrop-blur-xl transition-all duration-300 lg:left-0',
+          open ? 'left-0' : '-left-full'
         )}
       >
         <div className="flex h-full flex-col">
-          <div className="flex items-center gap-3 border-b border-slate-100 pb-5">
+          <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-5">
             <div className="flex h-14 w-14 items-center justify-center rounded-[22px] bg-gradient-to-br from-blue-700 via-indigo-600 to-cyan-500 text-xl font-black text-white shadow-[0_20px_40px_-18px_rgba(37,99,235,0.8)]">
               MOD
             </div>
@@ -93,7 +93,7 @@ export function DashboardSidebar() {
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-blue-600">
                 Control Center
               </p>
-              <h1 className="text-lg font-black text-slate-900">{roleLabel}</h1>
+              <h1 className="text-lg font-black text-slate-900 dark:text-slate-100">{roleLabel}</h1>
             </div>
           </div>
 
@@ -136,7 +136,7 @@ export function DashboardSidebar() {
                     'group flex items-center gap-3 rounded-[22px] px-4 py-3.5 text-sm font-semibold transition',
                     isActive
                       ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_20px_40px_-20px_rgba(37,99,235,0.85)]'
-                      : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100'
                   )
                 }
               >
@@ -148,9 +148,9 @@ export function DashboardSidebar() {
             ))}
           </nav>
 
-          <div className="mt-6 rounded-[26px] border border-slate-100 bg-slate-50/90 p-4">
+          <div className="mt-6 rounded-[26px] border border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/90 p-4">
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-blue-600 shadow-sm">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white dark:bg-slate-950 text-blue-600 shadow-sm">
                 {user?.role === 'admin' ? (
                   <ShieldCheck className="h-5 w-5" />
                 ) : user?.role === 'company' ? (
@@ -162,10 +162,10 @@ export function DashboardSidebar() {
                 )}
               </div>
               <div>
-                <p className="text-sm font-semibold text-slate-900">
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
                   Focused workspace
                 </p>
-                <p className="text-xs text-slate-500">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
                   Only your role tools are visible here.
                 </p>
               </div>

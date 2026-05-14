@@ -16,7 +16,9 @@ export function ChatPopup({
         isOpen ? 'translate-x-0 opacity-100' : 'translate-x-8 opacity-0'
       }`}
     >
-      <div className="pointer-events-auto overflow-hidden rounded-[28px] border border-white/70 bg-white shadow-[0_28px_80px_-30px_rgba(15,23,42,0.35)]">
+      <div className={`overflow-hidden rounded-[28px] border border-white/70 dark:border-slate-800/70 bg-white dark:bg-slate-950 shadow-[0_28px_80px_-30px_rgba(15,23,42,0.35)] ${
+        isOpen ? 'pointer-events-auto' : 'pointer-events-none'
+      }`}>
         <div className="flex items-center justify-between bg-gradient-to-r from-blue-700 via-sky-600 to-cyan-500 px-5 py-4 text-white">
           <div>
             <p className="flex items-center gap-2 text-sm font-semibold text-white/85">
@@ -48,7 +50,7 @@ export function ChatPopup({
                 className={`max-w-[85%] rounded-[22px] px-4 py-3 text-sm leading-6 shadow-sm ${
                   message.sender === 'user'
                     ? 'rounded-br-md bg-blue-700 text-white'
-                    : 'rounded-bl-md border border-blue-100 bg-white text-slate-700'
+                    : 'rounded-bl-md border border-blue-100 dark:border-slate-800 bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-300'
                 }`}
               >
                 {message.text}
@@ -58,7 +60,7 @@ export function ChatPopup({
 
           {loading && (
             <div className="flex justify-start">
-              <div className="flex items-center gap-2 rounded-[22px] rounded-bl-md border border-blue-100 bg-white px-4 py-3 text-sm text-slate-500 shadow-sm">
+              <div className="flex items-center gap-2 rounded-[22px] rounded-bl-md border border-blue-100 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-3 text-sm text-slate-500 dark:text-slate-400 shadow-sm">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Thinking...
               </div>
@@ -66,13 +68,13 @@ export function ChatPopup({
           )}
         </div>
 
-        <form onSubmit={onSubmit} className="border-t border-slate-100 bg-white p-4">
-          <div className="flex items-end gap-3 rounded-[24px] border border-blue-100 bg-slate-50 p-2 shadow-inner shadow-slate-100/70">
+        <form onSubmit={onSubmit} className="border-t border-slate-100 bg-white dark:bg-slate-950 p-4">
+          <div className="flex items-end gap-3 rounded-[24px] border border-blue-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 p-2 shadow-inner shadow-slate-100/70">
             <input
               value={input}
               onChange={(event) => onInputChange(event.target.value)}
               placeholder="Ask about your order, tasks, or complaints..."
-              className="min-h-[44px] flex-1 bg-transparent px-3 text-sm text-slate-700 outline-none placeholder:text-slate-400"
+              className="min-h-[44px] flex-1 bg-transparent px-3 text-sm text-slate-700 dark:text-slate-300 outline-none placeholder:text-slate-400"
             />
             <button
               type="submit"

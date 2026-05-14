@@ -6,16 +6,11 @@ import {
   UserRoundCog,
 } from 'lucide-react';
 import { companyApi, serviceRequestsApi } from '../api/modules.js';
-import { DashboardLayout } from '../components/dashboard/DashboardLayout.jsx';
+import { useLayoutStore } from '../state/layoutStore.js';
 import { ChartCard } from '../components/dashboard/ChartCard.jsx';
 import { DataTable } from '../components/dashboard/DataTable.jsx';
 import { StatCard } from '../components/dashboard/StatCard.jsx';
-import {
-  extractCollection,
-  formatCompactNumber,
-  formatDate,
-  statusTone,
-} from '../lib/dashboard.js';
+import { extractCollection, formatCompactNumber, formatDate, statusTone } from '../lib/dashboard.js';
 
 export function CompanyRequestsPage() {
   const [requests, setRequests] = useState([]);
@@ -46,9 +41,12 @@ export function CompanyRequestsPage() {
     }
   };
 
+  const setHeader = useLayoutStore((state) => state.setHeader);
+
   useEffect(() => {
+    setHeader('Service Requests', 'Track incoming jobs, update request status, and assign field staff.');
     loadPage();
-  }, []);
+  }, [setHeader]);
 
   const stats = useMemo(() => {
     return requests.reduce(
@@ -109,13 +107,8 @@ export function CompanyRequestsPage() {
   }));
 
   return (
-    <DashboardLayout
-      title="Service Requests"
-      subtitle="Track incoming jobs, update request status, and assign field staff."
-      searchPlaceholder="Search requests, clients, services..."
-    >
-      <div className="space-y-6">
-        {feedback && <FeedbackBanner message={feedback} />}
+    <div className="space-y-6">
+      {feedback && <FeedbackBanner message={feedback} />}
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <StatCard
@@ -165,28 +158,28 @@ export function CompanyRequestsPage() {
                 {requests.map((request) => (
                   <div
                     key={request.id}
-                    className="rounded-[28px] border border-slate-100 bg-slate-50/80 p-5"
+                    className="rounded-[28px] border border-slate-100 bg-slate-50 dark:bg-slate-900/80 p-5"
                   >
                     <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                       <div className="space-y-2">
                         <div className="flex flex-wrap items-center gap-3">
-                          <h3 className="text-lg font-bold text-slate-900">
+                          <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">
                             #{request.id} {request.service?.title || 'Service request'}
                           </h3>
                           <StatusBadge value={request.status} />
                         </div>
-                        <p className="text-sm text-slate-500">
+                        <p className="text-sm text-slate-500 dark:text-slate-400">
                           Client:{' '}
-                          <span className="font-semibold text-slate-700">
+                          <span className="font-semibold text-slate-700 dark:text-slate-300">
                             {request.client?.display_name ||
                               request.client?.name ||
                               'Client'}
                           </span>
                         </p>
-                        <p className="text-sm text-slate-500">
+                        <p className="text-sm text-slate-500 dark:text-slate-400">
                           Requested for {formatDate(request.requested_for || request.created_at)}
                         </p>
-                        <p className="text-sm text-slate-500">
+                        <p className="text-sm text-slate-500 dark:text-slate-400">
                           {request.city || request.address || 'No location provided'}
                         </p>
                       </div>
@@ -202,7 +195,7 @@ export function CompanyRequestsPage() {
                               className={`rounded-full px-3 py-2 text-xs font-semibold transition ${
                                 request.status === status
                                   ? 'bg-slate-900 text-white'
-                                  : 'bg-white text-slate-600 hover:bg-slate-100'
+                                  : 'bg-white dark:bg-slate-950 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 dark:bg-slate-800'
                               } disabled:cursor-not-allowed disabled:opacity-60`}
                             >
                               {actionKey === `status-${request.id}-${status}`
@@ -221,7 +214,7 @@ export function CompanyRequestsPage() {
                                 [request.id]: event.target.value,
                               }))
                             }
-                            className="min-w-0 flex-1 rounded-[18px] border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700 outline-none focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
+                            className="min-w-0 flex-1 rounded-[18px] border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-3 text-sm text-slate-700 dark:text-slate-300 outline-none focus:border-blue-400 dark:focus:border-blue-400 focus:ring-4 focus:ring-blue-100"
                           >
                             <option value="">Select technician</option>
                             {technicianOptions.map((technician) => (
@@ -270,8 +263,7 @@ export function CompanyRequestsPage() {
             />
           </>
         )}
-      </div>
-    </DashboardLayout>
+    </div>
   );
 }
 
@@ -295,7 +287,7 @@ function StatusBadge({ value }) {
 
 function FeedbackBanner({ message }) {
   return (
-    <div className="rounded-[24px] border border-blue-100 bg-blue-50 px-5 py-3 text-sm text-blue-700">
+    <div className="rounded-[24px] border border-blue-100 dark:border-slate-800 bg-blue-50 px-5 py-3 text-sm text-blue-700">
       {message}
     </div>
   );
@@ -303,7 +295,7 @@ function FeedbackBanner({ message }) {
 
 function EmptyBlock({ message }) {
   return (
-    <div className="rounded-[24px] bg-white px-5 py-8 text-center text-sm text-slate-500">
+    <div className="rounded-[24px] bg-white dark:bg-slate-950 px-5 py-8 text-center text-sm text-slate-500 dark:text-slate-400">
       {message}
     </div>
   );
@@ -311,9 +303,9 @@ function EmptyBlock({ message }) {
 
 function LoadingPanel({ label }) {
   return (
-    <div className="rounded-[30px] border border-white/70 bg-white/90 p-10 text-center shadow-[0_35px_80px_-45px_rgba(37,99,235,0.55)]">
-      <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-slate-200 border-t-blue-600" />
-      <p className="mt-4 text-sm font-medium text-slate-500">{label}</p>
+    <div className="rounded-[30px] border border-white/70 dark:border-slate-800/70 bg-white/90 dark:bg-slate-950/90 p-10 text-center shadow-[0_35px_80px_-45px_rgba(37,99,235,0.55)]">
+      <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-slate-200 dark:border-slate-800 border-t-blue-600" />
+      <p className="mt-4 text-sm font-medium text-slate-500 dark:text-slate-400">{label}</p>
     </div>
   );
 }

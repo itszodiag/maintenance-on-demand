@@ -29,7 +29,7 @@ export function ServiceDetailsPage() {
   }, [serviceId])
 
   if (!service) {
-    return <div className="soft-panel p-6 text-slate-500">Loading service details...</div>
+    return <div className="soft-panel p-6 text-slate-500 dark:text-slate-400">Loading service details...</div>
   }
 
   const submitRequest = async (event) => {
@@ -112,8 +112,8 @@ export function ServiceDetailsPage() {
 
           <SectionCard>
             <h3 className="text-xl font-bold">Provider</h3>
-            <div className="mt-4 flex flex-col gap-2 text-sm text-slate-600">
-              <p className="font-semibold text-slate-900">{service.provider?.display_name}</p>
+            <div className="mt-4 flex flex-col gap-2 text-sm text-slate-600 dark:text-slate-400">
+              <p className="font-semibold text-slate-900 dark:text-slate-100">{service.provider?.display_name}</p>
               <p>{service.provider?.city}</p>
               <p>{service.provider?.bio || 'Experienced provider available across multiple maintenance requests.'}</p>
             </div>
@@ -148,12 +148,12 @@ export function ServiceDetailsPage() {
             <div className="mt-4 space-y-4">
               {(service.reviews ?? []).length ? (
                 service.reviews.map((review) => (
-                  <div key={review.id} className="rounded-[20px] border border-blue-100 p-4">
+                  <div key={review.id} className="rounded-[20px] border border-blue-100 dark:border-slate-800 p-4">
                     <div className="flex items-center justify-between">
                       <p className="font-semibold">{review.author?.display_name ?? review.author?.name}</p>
                       <span className="text-sm text-amber-600">{review.rating} / 5</span>
                     </div>
-                    <p className="mt-2 text-sm text-slate-600">{review.comment}</p>
+                    <p className="mt-2 text-sm text-slate-600 dark:text-slate-400">{review.comment}</p>
                   </div>
                 ))
               ) : (
@@ -215,9 +215,9 @@ export function ServiceDetailsPage() {
 
 function Metric({ label, value }) {
   return (
-    <div className="rounded-[20px] bg-slate-50 p-4">
+    <div className="rounded-[20px] bg-slate-50 dark:bg-slate-900 p-4">
       <p className="text-xs uppercase tracking-[0.2em] text-slate-400">{label}</p>
-      <p className="mt-2 font-bold text-slate-900">{value}</p>
+      <p className="mt-2 font-bold text-slate-900 dark:text-slate-100">{value}</p>
     </div>
   )
 }

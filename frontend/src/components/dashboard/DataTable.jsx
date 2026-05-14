@@ -6,10 +6,10 @@ export function DataTable({
   action = null,
 }) {
   return (
-    <section className="rounded-[30px] border border-white/70 bg-white/90 shadow-[0_35px_80px_-45px_rgba(15,23,42,0.35)]">
+    <section className="rounded-[30px] border border-white/70 dark:border-slate-800/70 bg-white/90 dark:bg-slate-950/90 shadow-[0_35px_80px_-45px_rgba(15,23,42,0.35)]">
       <div className="flex items-center justify-between gap-3 border-b border-slate-100 px-6 py-5">
         <div>
-          <h3 className="text-lg font-bold text-slate-900">{title}</h3>
+          <h3 className="text-lg font-bold text-slate-900 dark:text-slate-100">{title}</h3>
         </div>
         {action}
       </div>
@@ -17,7 +17,7 @@ export function DataTable({
       <div className="overflow-x-auto">
         <table className="w-full min-w-[620px]">
           <thead>
-            <tr className="bg-slate-50/80">
+            <tr className="bg-slate-50 dark:bg-slate-900/80">
               {columns.map((column) => (
                 <th
                   key={column}
@@ -33,7 +33,7 @@ export function DataTable({
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-6 py-10 text-center text-sm text-slate-500"
+                  className="px-6 py-10 text-center text-sm text-slate-500 dark:text-slate-400"
                 >
                   {emptyLabel}
                 </td>
@@ -42,12 +42,12 @@ export function DataTable({
               data.map((row, index) => (
                 <tr
                   key={row.id ?? index}
-                  className="border-t border-slate-100 transition hover:bg-slate-50/60"
+                  className="border-t border-slate-100 transition hover:bg-slate-50 dark:hover:bg-slate-800 dark:bg-slate-900/60"
                 >
                   {columns.map((column) => (
                     <td
                       key={column}
-                      className="px-6 py-4 text-sm text-slate-700"
+                      className="px-6 py-4 text-sm text-slate-700 dark:text-slate-300"
                     >
                       {row[column] ?? '-'}
                     </td>

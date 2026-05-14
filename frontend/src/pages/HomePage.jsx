@@ -21,14 +21,14 @@ export function HomePage() {
       <section className="glass-card overflow-hidden p-8 lg:p-12">
         <div className="grid gap-8 lg:grid-cols-[1.2fr,0.8fr] lg:items-center">
           <div>
-            <p className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-blue-700">
+            <p className="inline-flex items-center gap-2 rounded-full bg-blue-50 dark:bg-blue-900/30 px-4 py-2 text-xs font-semibold uppercase tracking-[0.28em] text-blue-700 dark:text-blue-400">
               <Sparkles className="h-4 w-4" />
               End-to-end maintenance platform
             </p>
-            <h1 className="mt-6 max-w-4xl text-5xl font-black leading-tight tracking-tight text-slate-900 lg:text-6xl">
+            <h1 className="mt-6 max-w-4xl text-5xl font-black leading-tight tracking-tight text-slate-900 dark:text-slate-100 lg:text-6xl">
               Search technicians, order supplies, chat instantly, and track every job across Morocco.
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600">
+            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-600 dark:text-slate-400">
               Built for modern maintenance workflows with booking, marketplace checkout, role-based dashboards, real-time chat, and smart maps.
             </p>
 
@@ -37,7 +37,7 @@ export function HomePage() {
                 event.preventDefault()
                 navigate(`/services?search=${encodeURIComponent(query)}`)
               }}
-              className="mt-8 flex flex-col gap-3 rounded-[28px] border border-blue-100 bg-white p-4 shadow-sm lg:flex-row"
+              className="mt-8 flex flex-col gap-3 rounded-[28px] border border-blue-100 dark:border-slate-800 bg-white dark:bg-slate-950 p-4 shadow-sm lg:flex-row"
             >
               <input className="field flex-1" placeholder="Search plumbing, HVAC, electricians, repair..." value={query} onChange={(event) => setQuery(event.target.value)} />
               <button type="submit" className="button-primary">
@@ -52,10 +52,10 @@ export function HomePage() {
               { title: 'Marketplace checkout', text: 'Buy products, manage stock, and pay by cash or Stripe test mode.', icon: ShoppingBag },
               { title: 'Live collaboration', text: 'WhatsApp-style messaging with typing, seen, and presence.', icon: Compass },
             ].map(({ title, text, icon: Icon }) => (
-              <div key={title} className="rounded-[24px] border border-blue-100 bg-white/90 p-5 shadow-sm">
-                <Icon className="h-8 w-8 text-blue-700" />
+              <div key={title} className="rounded-[24px] border border-blue-100 dark:border-slate-800 bg-white/90 dark:bg-slate-950/90 p-5 shadow-sm">
+                <Icon className="h-8 w-8 text-blue-700 dark:text-blue-500" />
                 <h3 className="mt-4 text-lg font-bold">{title}</h3>
-                <p className="mt-2 text-sm leading-6 text-slate-600">{text}</p>
+                <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">{text}</p>
               </div>
             ))}
           </div>
@@ -90,7 +90,7 @@ export function HomePage() {
           <div className="grid gap-4 lg:grid-cols-3">
             {services.slice(0, 6).map((service) => (
               <Link key={service.id} to={`/services/${service.id}`} className="soft-panel overflow-hidden transition hover:-translate-y-1 hover:shadow-lg">
-                <div className="h-48 bg-gradient-to-br from-blue-100 via-sky-100 to-blue-50">
+                <div className="h-48 bg-gradient-to-br from-blue-100 via-sky-100 to-blue-50 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900">
                   {service.images?.[0] ? (
                     <img src={service.images[0].url} alt={service.title} className="h-full w-full object-cover" />
                   ) : (
@@ -102,10 +102,10 @@ export function HomePage() {
                 <div className="p-5">
                   <div className="flex items-center justify-between gap-3">
                     <h3 className="text-lg font-bold">{service.title}</h3>
-                    <span className="text-sm font-semibold text-blue-700">{service.price} MAD</span>
+                    <span className="text-sm font-semibold text-blue-700 dark:text-blue-400">{service.price} MAD</span>
                   </div>
-                  <p className="mt-2 text-sm text-slate-500">{service.city} | {service.category}</p>
-                  <p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-600">{service.description}</p>
+                  <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{service.city} | {service.category}</p>
+                  <p className="mt-3 line-clamp-2 text-sm leading-6 text-slate-600 dark:text-slate-400">{service.description}</p>
                 </div>
               </Link>
             ))}
@@ -126,7 +126,7 @@ export function HomePage() {
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
             {products.slice(0, 8).map((product) => (
               <Link key={product.id} to={`/products/${product.id}`} className="soft-panel overflow-hidden transition hover:-translate-y-1 hover:shadow-lg">
-                <div className="h-40 bg-gradient-to-br from-blue-50 via-cyan-50 to-white">
+                <div className="h-40 bg-gradient-to-br from-blue-50 via-cyan-50 to-white dark:from-slate-800 dark:via-slate-800 dark:to-slate-900">
                   {product.images?.[0] ? (
                     <img src={product.images[0].url} alt={product.title} className="h-full w-full object-cover" />
                   ) : (
@@ -137,8 +137,8 @@ export function HomePage() {
                 </div>
                 <div className="p-5">
                   <h3 className="font-bold">{product.title}</h3>
-                  <p className="mt-2 text-sm text-slate-500">{product.brand} | {product.speciality}</p>
-                  <p className="mt-3 text-lg font-black text-blue-800">{product.price} MAD</p>
+                  <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">{product.brand} | {product.speciality}</p>
+                  <p className="mt-3 text-lg font-black text-blue-800 dark:text-blue-400">{product.price} MAD</p>
                 </div>
               </Link>
             ))}
@@ -151,15 +151,15 @@ export function HomePage() {
       <section className="grid gap-4 lg:grid-cols-3">
         <SectionCard>
           <h3 className="text-xl font-bold">Clients</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-600">Search with filters, save favorites, request service, chat, and checkout products without leaving the platform.</p>
+          <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">Search with filters, save favorites, request service, chat, and checkout products without leaving the platform.</p>
         </SectionCard>
         <SectionCard>
           <h3 className="text-xl font-bold">Operations teams</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-600">Technicians, companies, and vendors get clear dashboards for requests, availability, orders, and analytics.</p>
+          <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">Technicians, companies, and vendors get clear dashboards for requests, availability, orders, and analytics.</p>
         </SectionCard>
         <SectionCard>
           <h3 className="text-xl font-bold">Administrators</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-600">Verify users, moderate catalog content, and monitor platform-wide performance from one control room.</p>
+          <p className="mt-2 text-sm leading-6 text-slate-600 dark:text-slate-400">Verify users, moderate catalog content, and monitor platform-wide performance from one control room.</p>
         </SectionCard>
       </section>
     </div>
