@@ -1,0 +1,73 @@
+@startuml
+skinparam actorStyle awesome
+left to right direction
+
+actor "Client" as C
+actor "Technician" as T
+actor "Company" as Co
+actor "Vendor" as V
+actor "Admin" as A
+
+package "Identity Module" {
+    usecase "Register/Login" as UC1
+    usecase "Manage Profile" as UC2
+    usecase "Verify Provider" as UC3
+}
+
+package "Marketplace Module" {
+    usecase "Manage Catalog" as UC4
+    usecase "Search/Filter Catalog" as UC5
+    usecase "Purchase & Checkout" as UC6
+    usecase "Process Payment" as UC7
+}
+
+package "Operations Module" {
+    usecase "Request Service" as UC8
+    usecase "Assign Personnel" as UC9
+    usecase "Track Work Progress" as UC10
+    usecase "Set Availability" as UC11
+}
+
+package "Communication Module" {
+    usecase "Real-time Messaging" as UC12
+    usecase "Rate & Review" as UC13
+    usecase "Notifications" as UC14
+}
+
+C --> UC1
+C --> UC5
+C --> UC6
+C --> UC8
+C --> UC12
+C --> UC13
+C --> UC14
+
+T --> UC1
+T --> UC2
+T --> UC4
+T --> UC10
+T --> UC11
+T --> UC12
+T --> UC14
+
+Co --> UC1
+Co --> UC2
+Co --> UC4
+Co --> UC9
+Co --> UC12
+Co --> UC14
+
+V --> UC1
+V --> UC2
+V --> UC4
+V --> UC12
+V --> UC14
+
+A --> UC3
+A --> UC14
+
+UC3 .> UC2 : <<extend>>
+UC6 .> UC7 : <<include>>
+UC9 .> UC10 : <<include>>
+
+@enduml

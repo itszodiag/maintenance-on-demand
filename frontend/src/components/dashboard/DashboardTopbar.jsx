@@ -3,9 +3,12 @@ import {
   Search,
   Settings,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useNotificationPolling } from '../../state/notificationStore.js';
+import { useUIStore } from '../../state/uiStore.js';
 import { ProfileDropdown } from '../layout/ProfileDropdownNew.jsx';
+import { NotificationModal } from '../layout/NotificationModal.jsx';
 
 export function DashboardTopbar({
   title,
@@ -13,9 +16,37 @@ export function DashboardTopbar({
   searchPlaceholder,
   user,
   onLogout,
-  unreadNotifications = 0,
 }) {
-  const [avatarFailed, setAvatarFailed] = useState(false);
+  const notifications = useNotificationPolling((state) => state.items);
+  const unreadCount = useNotificationPolling((s) => s.unreadCount);
+  const fetchNotifications = useNotificationPolling((s) => s.fetch);
+  const markAllRead = useNotificationPolling((s) => s.markAllRead);
+  const setNotificationsOpen = useUIStore((s) => s.setNotificationsOpen);
+
+  const [showNotifications, setShowNotifications] = useState(false);
+  const bellRef = useRef(null);
+
+  const newOrderAlerts = useMemo(
+    () => notifications.filter((item) => item.type === 'order' && !item.read_at).length,
+    [notifications]
+  );
+
+  const toggleNotifications = useCallback(() => {
+    setShowNotifications((prev) => !prev);
+  }, []);
+
+  const closeNotifications = useCallback(() => {
+    setShowNotifications(false);
+  }, []);
+
+  useEffect(() => {
+    if (showNotifications) {
+      fetchNotifications();
+      setNotificationsOpen(true);
+    } else {
+      setNotificationsOpen(false);
+    }
+  }, [showNotifications, fetchNotifications, setNotificationsOpen]);
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800/60 bg-white/95 dark:bg-slate-950/95 backdrop-blur-xl transition-colors duration-300">
@@ -46,17 +77,21 @@ export function DashboardTopbar({
             />
           </div>
 
-          <Link
-            to="/notifications"
+          {/* Notification Bell Button */}
+          <button
+            ref={bellRef}
+            type="button"
+            onClick={toggleNotifications}
             className="relative flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 transition-all hover:scale-105 hover:bg-slate-200 dark:hover:bg-slate-700"
+            aria-label="Toggle notifications"
           >
             <Bell className="h-4 w-4" />
-            {unreadNotifications > 0 ? (
+            {unreadCount > 0 ? (
               <span className="absolute -right-1 -top-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-pink-500 px-1 text-[10px] font-bold text-white shadow-lg">
-                {unreadNotifications > 9 ? '9+' : unreadNotifications}
+                {unreadCount > 9 ? '9+' : unreadCount}
               </span>
             ) : null}
-          </Link>
+          </button>
 
           <Link
             to="/profile#settings"
@@ -69,12 +104,21 @@ export function DashboardTopbar({
             <ProfileDropdown
               user={user}
               onLogout={onLogout}
-              avatarFailed={avatarFailed}
-              setAvatarFailed={setAvatarFailed}
+              newOrderCount={newOrderAlerts}
             />
           )}
         </div>
       </div>
+
+      {/* Notification Dropdown */}
+      <NotificationModal
+        isOpen={showNotifications}
+        onClose={closeNotifications}
+        unreadCount={unreadCount}
+        items={notifications}
+        onMarkAllRead={markAllRead}
+        triggerRef={bellRef}
+      />
     </header>
   );
 }

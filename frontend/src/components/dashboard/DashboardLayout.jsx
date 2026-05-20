@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../state/authStore.js';
-import { useNotificationPolling } from '../../state/notificationStore.js';
 import { DashboardSidebar } from './DashboardSidebar.jsx';
 import { DashboardTopbar } from './DashboardTopbar.jsx';
 
@@ -13,7 +12,7 @@ export function DashboardLayout({
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
-  const unreadNotifications = useNotificationPolling((state) => state.unreadCount);
+
 
   const handleLogout = async () => {
     await logout();
@@ -31,7 +30,6 @@ export function DashboardLayout({
           searchPlaceholder={searchPlaceholder}
           user={user}
           onLogout={handleLogout}
-          unreadNotifications={unreadNotifications}
         />
 
         <main className="px-4 pb-10 pt-4 sm:px-6 lg:px-8">

@@ -1,8 +1,6 @@
 import {
   ChevronDown,
-  ClipboardList,
   LogOut,
-  Pencil,
   Settings,
   ShoppingBag,
   User,
@@ -19,22 +17,10 @@ const menuItems = [
     href: '/profile',
   },
   {
-    id: 'edit-profile',
-    label: 'Edit Profile',
-    icon: Pencil,
-    href: '/profile#edit',
-  },
-  {
-    id: 'my-orders',
-    label: 'My Orders',
+    id: 'orders',
+    label: 'Orders',
     icon: ShoppingBag,
-    href: '/profile#orders',
-  },
-  {
-    id: 'order-status',
-    label: 'Order Status',
-    icon: ClipboardList,
-    href: '/profile#order-status',
+    href: '/orders',
   },
   {
     id: 'settings',
@@ -43,6 +29,22 @@ const menuItems = [
     href: '/profile#settings',
   },
 ];
+
+function MenuItem({ item, onClick }) {
+  const Icon = item.icon;
+  return (
+    <Link
+      to={item.href}
+      onClick={onClick}
+      className="flex items-center gap-3 rounded-[16px] px-3 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-all duration-200 hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-slate-800 dark:hover:text-cyan-400 group"
+    >
+      <span className="flex h-8 w-8 items-center justify-center rounded-[12px] bg-blue-50/50 text-blue-600 dark:bg-slate-800 dark:text-cyan-400 transition-colors group-hover:bg-blue-100 dark:group-hover:bg-cyan-900/30">
+        <Icon className="h-4 w-4" />
+      </span>
+      {item.label}
+    </Link>
+  );
+}
 
 export function ProfileDropdown({ user, onLogout }) {
   const navigate = useNavigate();
@@ -157,7 +159,7 @@ export function ProfileDropdown({ user, onLogout }) {
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute right-0 top-full mt-3 w-80 origin-top-right rounded-[24px] border border-blue-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl dark:shadow-none shadow-blue-200/50 overflow-hidden z-[100]"
+          className="absolute right-0 top-full mt-3 w-80 origin-top-right rounded-[24px] border border-blue-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl dark:shadow-none shadow-blue-200/50 overflow-hidden z-[100] backdrop-blur-sm"
         >
           {/* User Info Header */}
           <div className="bg-gradient-to-br from-blue-700 to-indigo-600 dark:from-teal-700 dark:to-cyan-900 p-4">
@@ -217,30 +219,17 @@ export function ProfileDropdown({ user, onLogout }) {
 
           {/* Menu Items */}
           <div className="p-2">
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.id}
-                  to={item.href}
-                  onClick={close}
-                  className="flex items-center gap-3 rounded-[16px] px-3 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-colors hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-slate-800 dark:hover:text-cyan-400"
-                >
-                  <span className="flex h-8 w-8 items-center justify-center rounded-[12px] bg-blue-50/50 text-blue-600 dark:bg-slate-800 dark:text-cyan-400 group-hover:bg-blue-100 dark:group-hover:bg-cyan-900/30">
-                    <Icon className="h-4 w-4" />
-                  </span>
-                  {item.label}
-                </Link>
-              );
-            })}
+            {menuItems.map((item) => (
+              <MenuItem key={item.id} item={item} onClick={close} />
+            ))}
 
             <div className="my-2 border-t border-slate-100 dark:border-slate-800" />
 
             <button
               onClick={handleLogout}
-              className="flex w-full items-center gap-3 rounded-[16px] px-3 py-2.5 text-sm font-semibold text-rose-600 dark:text-rose-400 transition-colors hover:bg-rose-50 dark:hover:bg-rose-950/50"
+              className="flex w-full items-center gap-3 rounded-[16px] px-3 py-2.5 text-sm font-semibold text-rose-600 dark:text-rose-400 transition-all duration-200 hover:bg-rose-50 dark:hover:bg-rose-950/50 group"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-[12px] bg-rose-50 text-rose-600 dark:bg-rose-950/50 dark:text-rose-400">
+              <span className="flex h-8 w-8 items-center justify-center rounded-[12px] bg-rose-50 text-rose-600 dark:bg-rose-950/50 dark:text-rose-400 transition-colors group-hover:bg-rose-100">
                 <LogOut className="h-4 w-4" />
               </span>
               Sign out
@@ -248,10 +237,6 @@ export function ProfileDropdown({ user, onLogout }) {
           </div>
         </div>
       )}
-    </div>
-  );
-}
-    )}
     </div>
   );
 }

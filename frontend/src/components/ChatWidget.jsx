@@ -2,6 +2,8 @@ import { MessageCircleMore } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { aiApi } from '../api/modules.js';
 import { ChatPopup } from './ChatPopup.jsx';
+import { useUIStore } from '../state/uiStore.js';
+import clsx from 'clsx';
 
 const welcomeMessage = {
   id: 1,
@@ -16,6 +18,7 @@ export function ChatWidget() {
   const [messages, setMessages] = useState([welcomeMessage]);
   const listRef = useRef(null);
   const nextIdRef = useRef(2);
+  const notificationsOpen = useUIStore((s) => s.notificationsOpen);
 
   useEffect(() => {
     if (!isOpen) {
@@ -91,7 +94,13 @@ export function ChatWidget() {
       <button
         type="button"
         onClick={() => setIsOpen((current) => !current)}
-        className="fixed bottom-6 right-6 z-[80] flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-700 to-cyan-500 text-white shadow-[0_20px_45px_-18px_rgba(37,99,235,0.8)] transition hover:scale-105 hover:shadow-[0_24px_55px_-18px_rgba(14,116,144,0.85)] sm:bottom-8 sm:right-8"
+        className={clsx(
+          'fixed z-[75] flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-700 to-cyan-500 text-white shadow-[0_20px_45px_-18px_rgba(37,99,235,0.8)] transition-all duration-300 hover:scale-105 hover:shadow-[0_24px_55px_-18px_rgba(14,116,144,0.85)]',
+          'sm:bottom-8 sm:right-8',
+          notificationsOpen
+            ? 'bottom-8 right-8 opacity-0 pointer-events-none'
+            : 'bottom-6 right-6 opacity-100'
+        )}
         aria-label={isOpen ? 'Close AI chat' : 'Open AI chat'}
       >
         <MessageCircleMore className="h-7 w-7" />

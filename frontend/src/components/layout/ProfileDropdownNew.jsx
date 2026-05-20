@@ -1,12 +1,12 @@
 import {
   ChevronDown,
-  ClipboardList,
   LogOut,
-  Pencil,
   Settings,
   ShoppingBag,
   User,
 } from 'lucide-react';
+import DropdownItem from './DropdownItem.jsx';
+import ToggleSwitch from './ToggleSwitch.jsx';
 import { Link, useNavigate } from 'react-router-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
@@ -19,22 +19,10 @@ const menuItems = [
     href: '/profile',
   },
   {
-    id: 'edit-profile',
-    label: 'Edit Profile',
-    icon: Pencil,
-    href: '/profile#edit',
-  },
-  {
-    id: 'my-orders',
-    label: 'My Orders',
+    id: 'orders',
+    label: 'Orders',
     icon: ShoppingBag,
     href: '/profile#orders',
-  },
-  {
-    id: 'order-status',
-    label: 'Order Status',
-    icon: ClipboardList,
-    href: '/profile#order-status',
   },
   {
     id: 'settings',
@@ -44,7 +32,7 @@ const menuItems = [
   },
 ];
 
-export function ProfileDropdown({ user, onLogout }) {
+export function ProfileDropdown({ user, onLogout, newOrderCount = 0 }) {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [avatarFailed, setAvatarFailed] = useState(false);
@@ -58,9 +46,13 @@ export function ProfileDropdown({ user, onLogout }) {
     .join('')
     .toUpperCase();
 
+
+
   const close = useCallback(() => {
     setIsOpen(false);
   }, []);
+
+
 
   // Click-outside handler
   useEffect(() => {
@@ -157,7 +149,7 @@ export function ProfileDropdown({ user, onLogout }) {
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute right-0 top-full mt-3 w-80 origin-top-right rounded-[24px] border border-blue-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl dark:shadow-none shadow-blue-200/50 overflow-hidden z-[100]"
+          className="absolute right-0 top-full mt-3 w-80 origin-top-right rounded-[24px] border border-blue-100 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-2xl dark:shadow-xl shadow-blue-200/50 dark:shadow-slate-950/50 overflow-hidden z-[100]"
         >
           {/* User Info Header */}
           <div className="bg-gradient-to-br from-blue-700 to-indigo-600 dark:from-teal-700 dark:to-cyan-900 p-4">
@@ -216,31 +208,32 @@ export function ProfileDropdown({ user, onLogout }) {
           </div>
 
           {/* Menu Items */}
-          <div className="p-2">
-            {menuItems.map((item) => {
-              const Icon = item.icon;
-              return (
-                <Link
-                  key={item.id}
-                  to={item.href}
-                  onClick={close}
-                  className="flex items-center gap-3 rounded-[16px] px-3 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-200 transition-colors hover:bg-blue-50 hover:text-blue-700 dark:hover:bg-slate-800 dark:hover:text-cyan-400"
-                >
-                  <span className="flex h-8 w-8 items-center justify-center rounded-[12px] bg-blue-50/50 text-blue-600 dark:bg-slate-800 dark:text-cyan-400 group-hover:bg-blue-100 dark:group-hover:bg-cyan-900/30">
-                    <Icon className="h-4 w-4" />
-                  </span>
-                  {item.label}
-                </Link>
-              );
-            })}
+          <div className="p-2 space-y-0.5">
+            <DropdownItem to="/profile" icon={User} label="View Profile" onClick={close} />
 
-            <div className="my-2 border-t border-slate-100 dark:border-slate-800" />
+            <DropdownItem
+              to="/profile#orders"
+              icon={ShoppingBag}
+              label="Orders"
+              badge={newOrderCount > 0 ? newOrderCount : null}
+              onClick={close}
+            />
+
+
+            {/* Dark Mode Toggle */}
+            <div className="px-1 py-2 mt-1 border-t border-slate-100 dark:border-slate-800">
+              <ToggleSwitch label="Dark Mode" />
+            </div>
+
+            <DropdownItem to="/profile#settings" icon={Settings} label="Settings" onClick={close} />
+
+            <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
 
             <button
               onClick={handleLogout}
-              className="flex w-full items-center gap-3 rounded-[16px] px-3 py-2.5 text-sm font-semibold text-rose-600 dark:text-rose-400 transition-colors hover:bg-rose-50 dark:hover:bg-rose-950/50"
+              className="flex w-full items-center gap-3 rounded-[12px] px-3 py-2.5 text-sm font-semibold text-rose-600 dark:text-rose-400 transition-colors duration-150 hover:bg-rose-50 dark:hover:bg-rose-950/50"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-[12px] bg-rose-50 text-rose-600 dark:bg-rose-950/50 dark:text-rose-400">
+              <span className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-rose-50 text-rose-600 dark:bg-rose-950/50 dark:text-rose-400">
                 <LogOut className="h-4 w-4" />
               </span>
               Sign out
@@ -248,7 +241,8 @@ export function ProfileDropdown({ user, onLogout }) {
           </div>
         </div>
       )}
+
+
     </div>
   );
 }
-

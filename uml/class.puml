@@ -1,0 +1,119 @@
+@startuml
+
+package "Core Identity" {
+
+    class User {
+        +id : Integer
+        +name : String
+        +email : String
+        +role : String
+        +is_verified : Boolean
+        +login()
+        +updateProfile()
+    }
+
+    class Client {
+        +address : String
+        +city : String
+    }
+
+    class Technician {
+        +bio : String
+        +rating : Float
+        +is_available : Boolean
+        +updateAvailability()
+    }
+
+    class Company {
+        +name : String
+        +location : String
+        +assignTechnician()
+    }
+
+    class Vendor {
+        +store_name : String
+        +description : String
+    }
+}
+
+package "Service Management" {
+
+    class Service {
+        +title : String
+        +price : Decimal
+        +status : Enum
+    }
+
+    class ServiceRequest {
+        +date : DateTime
+        +status : Enum
+        +address : String
+        +approve()
+        +complete()
+    }
+}
+
+package "Marketplace" {
+
+    class Product {
+        +name : String
+        +price : Decimal
+        +stock : Integer
+    }
+
+    class Order {
+        +total_amount : Decimal
+        +payment_status : Enum
+        +process()
+    }
+
+    class Payment {
+        +amount : Decimal
+        +method : String
+        +status : String
+    }
+}
+
+package "Communication" {
+
+    class Conversation {
+        +id : Integer
+        +sendMessage()
+    }
+
+    class Message {
+        +content : Text
+        +sent_at : DateTime
+    }
+
+    class Notification {
+        +title : String
+        +content : String
+        +read : Boolean
+    }
+}
+
+User "1" -- "0..1" Client
+User "1" -- "0..1" Technician
+User "1" -- "0..1" Company
+User "1" -- "0..1" Vendor
+
+Company "1" o-- "0..*" Technician
+
+Technician "1" -- "0..*" Service
+Company "1" -- "0..*" Service
+
+Service "1" -- "0..*" ServiceRequest
+Client "1" -- "0..*" ServiceRequest
+
+Vendor "1" -- "0..*" Product
+
+Client "1" -- "0..*" Order
+Order "1" --> "1" Payment
+
+ServiceRequest "1" -- "0..1" Conversation
+
+Conversation "1" *-- "0..*" Message
+
+User "1" -- "0..*" Notification
+@enduml

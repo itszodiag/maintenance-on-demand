@@ -23,6 +23,7 @@ import { NavLink } from 'react-router-dom';
 import clsx from 'clsx';
 import { useAuthStore } from '../../state/authStore.js';
 import { getRoleLabel } from '../../lib/roleRoutes.js';
+import { LogoIcon } from '../Logo.jsx';
 
 const navigationByRole = {
   admin: [
@@ -55,6 +56,28 @@ const navigationByRole = {
   ],
 };
 
+function SidebarItem({ to, label, icon: Icon, onClick }) {
+  return (
+    <NavLink
+      to={to}
+      onClick={onClick}
+      className={({ isActive }) =>
+        clsx(
+          'group flex items-center gap-3 rounded-[22px] px-4 py-3.5 text-sm font-semibold transition-all duration-200',
+          isActive
+            ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_18px_40px_-18px_rgba(37,99,235,0.85)]'
+            : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100'
+        )
+      }
+    >
+      <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-slate-700 transition duration-200 group-hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:group-hover:bg-slate-700">
+        <Icon className="h-5 w-5" />
+      </span>
+      <span>{label}</span>
+    </NavLink>
+  );
+}
+
 export function DashboardSidebar() {
   const user = useAuthStore((state) => state.user);
   const [open, setOpen] = useState(false);
@@ -86,9 +109,7 @@ export function DashboardSidebar() {
       >
         <div className="flex h-full flex-col">
           <div className="flex items-center gap-3 border-b border-slate-100 dark:border-slate-800 pb-5">
-            <div className="flex h-14 w-14 items-center justify-center rounded-[22px] bg-gradient-to-br from-blue-700 via-indigo-600 to-cyan-500 text-xl font-black text-white shadow-[0_20px_40px_-18px_rgba(37,99,235,0.8)]">
-              MOD
-            </div>
+            <LogoIcon className="h-14" />
             <div>
               <p className="text-xs font-semibold uppercase tracking-[0.28em] text-blue-600">
                 Control Center
@@ -126,25 +147,14 @@ export function DashboardSidebar() {
           </div>
 
           <nav className="mt-6 flex-1 space-y-2 overflow-y-auto pr-1">
-            {links.map(({ label, to, icon: Icon }) => (
-              <NavLink
+            {links.map(({ label, to, icon }) => (
+              <SidebarItem
                 key={to}
                 to={to}
+                label={label}
+                icon={icon}
                 onClick={() => setOpen(false)}
-                className={({ isActive }) =>
-                  clsx(
-                    'group flex items-center gap-3 rounded-[22px] px-4 py-3.5 text-sm font-semibold transition',
-                    isActive
-                      ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-[0_20px_40px_-20px_rgba(37,99,235,0.85)]'
-                      : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-100'
-                  )
-                }
-              >
-                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-white/10">
-                  <Icon className="h-5 w-5" />
-                </span>
-                <span>{label}</span>
-              </NavLink>
+              />
             ))}
           </nav>
 

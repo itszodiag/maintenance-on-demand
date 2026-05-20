@@ -1,0 +1,37 @@
+<svg width="32" height="32" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="120" height="120" fill="#0f172a"/>
+  
+  {/* House outline - turquoise */}
+  <g>
+    {/* Main house shape */}
+    <path
+      d="M 25 90 L 25 45 L 60 20 L 95 45 L 95 90 Z"
+      stroke="#14B8A6"
+      strokeWidth="5"
+      fill="none"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    {/* Door */}
+    <rect x="45" y="62" width="30" height="28" fill="#14B8A6" rx="2" />
+    {/* Door knob */}
+    <circle cx="70" cy="76" r="2" fill="white" />
+    {/* Window */}
+    <rect x="18" y="42" width="16" height="16" stroke="#14B8A6" strokeWidth="1.5" fill="none" rx="1.5" />
+    <line x1="26" y1="42" x2="26" y2="58" stroke="#14B8A6" strokeWidth="1.5" />
+    <line x1="18" y1="50" x2="34" y2="50" stroke="#14B8A6" strokeWidth="1.5" />
+    {/* Roof accent circle */}
+    <circle cx="60" cy="15" r="3" fill="#14B8A6" opacity="0.6" />
+  </g>
+  
+  {/* Wrench accent - black */}
+  <g transform="translate(70, 30)">
+    <g opacity="0.9">
+      {/* Wrench handle */}
+      <path d="M 8 3 L 16 3 Q 18 3 18 5 L 18 8 Q 18 10 16 10 L 8 10" stroke="black" strokeWidth="2" fill="none" strokeLinecap="round" />
+      {/* Wrench head */}
+      <circle cx="4" cy="6" r="4" stroke="black" strokeWidth="2" fill="none" />
+      <path d="M 1 6 L 7 6" stroke="black" strokeWidth="1.5" />
+    </g>
+  </g>
+</svg>

@@ -2,14 +2,13 @@ import { useEffect } from 'react';
 import { Outlet, Navigate } from 'react-router-dom';
 import { useAuthStore } from '../../state/authStore.js';
 import { useLayoutStore } from '../../state/layoutStore.js';
-import { useNotificationPolling } from '../../state/notificationStore.js';
 import { DashboardSidebar } from './DashboardSidebar.jsx';
 import { DashboardTopbar } from './DashboardTopbar.jsx';
 
 export function VendorLayout() {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
-  const unreadNotifications = useNotificationPolling((state) => state.unreadCount);
+
   const { title, subtitle } = useLayoutStore();
 
   // DEBUG LOGGING
@@ -33,7 +32,6 @@ export function VendorLayout() {
           searchPlaceholder="Search products, orders..."
           user={user}
           onLogout={logout}
-          unreadNotifications={unreadNotifications}
         />
 
         <main className="px-4 pb-10 pt-4 sm:px-6 lg:px-8">

@@ -3,20 +3,20 @@ import {
   BriefcaseBusiness,
   MapPinned,
   MessageCircle,
-  Moon,
   Search,
   ShoppingBag,
-  Sun,
 } from 'lucide-react';
 import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { useMemo, useState, useEffect } from 'react';
+import { useCallback, useMemo, useState, useEffect, useRef } from 'react';
 import clsx from 'clsx';
 import { useAuthStore } from '../../state/authStore.js';
-import { useThemeStore } from '../../state/themeStore.js';
 import { useNotificationPolling } from '../../state/notificationStore.js';
+import { useUIStore } from '../../state/uiStore.js';
 import { ChatWidget } from '../ChatWidget.jsx';
 import { ProfileDropdown } from './ProfileDropdownNew.jsx';
+import { NotificationModal } from './NotificationModal.jsx';
 import { getDashboardPathForRole } from '../../lib/roleRoutes.js';
+import { Logo } from '../Logo.jsx';
 
 const navItems = [
   { label: 'Services', to: '/services', icon: BriefcaseBusiness },
@@ -28,14 +28,16 @@ export function AppLayout({ dashboard = false }) {
   const navigate = useNavigate();
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
-  const theme = useThemeStore((state) => state.theme);
-  const toggleTheme = useThemeStore((state) => state.toggleTheme);
   const notifications = useNotificationPolling((state) => state.items);
-  const unreadCount = useNotificationPolling((state) => state.unreadCount);
-  const [query, setQuery] = useState('');
+  const unreadCount = useNotificationPolling((s) => s.unreadCount);
+  const fetchNotifications = useNotificationPolling((s) => s.fetch);
+  const markAllRead = useNotificationPolling((s) => s.markAllRead);
+  const setNotificationsOpen = useUIStore((s) => s.setNotificationsOpen);
 
-  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const [query, setQuery] = useState('');
   const [avatarFailed, setAvatarFailed] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const bellRef = useRef(null);
 
   // DEBUG LOGGING
   useEffect(() => {
@@ -48,13 +50,17 @@ export function AppLayout({ dashboard = false }) {
     [notifications]
   );
 
+  const newOrderAlerts = useMemo(
+    () => notifications.filter((item) => item.type === 'order' && !item.read_at).length,
+    [notifications]
+  );
+
   const handleSearch = (event) => {
     event.preventDefault();
     navigate(`/services?search=${encodeURIComponent(query)}`);
   };
 
   const handleLogout = async () => {
-    setNotificationsOpen(false);
     await logout();
     navigate('/');
   };
@@ -62,6 +68,23 @@ export function AppLayout({ dashboard = false }) {
   useEffect(() => {
     setAvatarFailed(false);
   }, [user?.avatar]);
+
+  const toggleNotifications = useCallback(() => {
+    setShowNotifications((prev) => !prev);
+  }, []);
+
+  const closeNotifications = useCallback(() => {
+    setShowNotifications(false);
+  }, []);
+
+  useEffect(() => {
+    if (showNotifications) {
+      fetchNotifications();
+      setNotificationsOpen(true);
+    } else {
+      setNotificationsOpen(false);
+    }
+  }, [showNotifications, fetchNotifications, setNotificationsOpen]);
 
   const getNotificationPath = (notification) => {
     const data = notification.data || {};
@@ -82,11 +105,7 @@ export function AppLayout({ dashboard = false }) {
       <header className="sticky top-0 z-40 border-b border-white/70 dark:border-slate-800/70 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl overflow-visible transition-colors duration-300">
         <div className="container-shell flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between overflow-visible">
           <div className="flex items-center gap-3">
-            <Link to="/" className="flex items-center gap-3">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-700 text-lg font-black text-white shadow-lg shadow-blue-200 dark:shadow-blue-900/50">
-                MOD
-              </div>
-            </Link>
+            <Logo />
           </div>
 
           <form
@@ -131,99 +150,27 @@ export function AppLayout({ dashboard = false }) {
               <>
                 <IconLink to="/chat" label="Chat" icon={MessageCircle} />
 
+                {/* Notification Bell Button */}
                 <button
+                  ref={bellRef}
                   type="button"
-                  onClick={toggleTheme}
-                  className="inline-flex items-center gap-2 rounded-full bg-white dark:bg-slate-950 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 transition hover:bg-blue-50 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-                  aria-label="Toggle dark mode"
+                  onClick={toggleNotifications}
+                  className="relative inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition bg-white dark:bg-slate-950 text-slate-700 dark:text-slate-300 hover:bg-blue-50 dark:bg-slate-800 dark:hover:bg-slate-700"
+                  aria-label="Toggle notifications"
                 >
-                  {theme === 'dark' ? (
-                    <Sun className="h-4 w-4" />
-                  ) : (
-                    <Moon className="h-4 w-4" />
+                  <Bell className="h-4 w-4" />
+                  Notifications
+                  {unreadCount > 0 && (
+                    <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-pink-500 px-1 text-[10px] font-bold text-white shadow-lg">
+                      {unreadCount > 9 ? '9+' : unreadCount}
+                    </span>
                   )}
                 </button>
-
-                <div className="relative z-50">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setNotificationsOpen((current) => !current);
-                    }}
-                    className="relative inline-flex items-center gap-2 rounded-full bg-white dark:bg-slate-950 px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 transition hover:bg-blue-50 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
-                  >
-                    <Bell className="h-4 w-4" />
-                    Notifications
-                    {unreadCount > 0 && (
-                      <span className="rounded-full bg-rose-500 px-2 py-0.5 text-xs text-white">
-                        {unreadCount}
-                      </span>
-                    )}
-                  </button>
-
-                  {notificationsOpen && (
-                    <div
-                      className="absolute right-0 top-full z-9999 mt-2 w-[340px] rounded-[24px] border border-blue-100 dark:border-slate-800 bg-white dark:bg-slate-900 p-3 shadow-xl shadow-blue-100/60 dark:shadow-none"
-                      style={{ position: 'absolute', right: 0, top: '100%' }}
-                    >
-                      <div className="flex items-center justify-between px-2 pb-2">
-                        <div>
-                          <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                            Notifications
-                          </p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400">
-                            Messages, requests, and payment updates.
-                          </p>
-                        </div>
-                        <Link
-                          to="/notifications"
-                          onClick={() => setNotificationsOpen(false)}
-                          className="text-sm font-semibold text-blue-700 dark:text-blue-400"
-                        >
-                          View all
-                        </Link>
-                      </div>
-
-                      <div className="space-y-2">
-                        {recentNotifications.length ? (
-                          recentNotifications.map((item) => (
-                            <Link
-                              key={item.id}
-                              to={getNotificationPath(item)}
-                              onClick={() => setNotificationsOpen(false)}
-                              className={clsx(
-                                'block rounded-[20px] px-4 py-3 transition hover:bg-blue-50',
-                                !item.read_at && 'bg-blue-50/70 dark:bg-slate-800/70'
-                              )}
-                            >
-                              <p className="text-xs uppercase tracking-[0.24em] text-blue-700 dark:text-blue-400">
-                                {item.type}
-                              </p>
-                              <p className="mt-1 font-semibold text-slate-900 dark:text-slate-100">
-                                {item.data?.title ??
-                                  item.data?.sender_name ??
-                                  'New activity'}
-                              </p>
-                              <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
-                                {item.data?.message}
-                              </p>
-                            </Link>
-                          ))
-                        ) : (
-                          <div className="rounded-[20px] bg-slate-50 dark:bg-slate-900 px-4 py-6 text-center text-sm text-slate-500 dark:text-slate-400 dark:bg-slate-700 dark:text-slate-400">
-                            You&apos;re all caught up.
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
-                </div>
 
                 <ProfileDropdown
                   user={user}
                   onLogout={logout}
-                  avatarFailed={avatarFailed}
-                  setAvatarFailed={setAvatarFailed}
+                  newOrderCount={newOrderAlerts}
                 />
               </>
             )}
@@ -235,6 +182,16 @@ export function AppLayout({ dashboard = false }) {
             )}
           </div>
         </div>
+
+        {/* Notification Dropdown */}
+        <NotificationModal
+          isOpen={showNotifications}
+          onClose={closeNotifications}
+          unreadCount={unreadCount}
+          items={notifications}
+          onMarkAllRead={markAllRead}
+          triggerRef={bellRef}
+        />
       </header>
 
       <main
